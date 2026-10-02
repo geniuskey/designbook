@@ -1,11 +1,14 @@
 <!doctype html>
+<!-- Copyright (c) 2026 geniuskey and DesignBook contributors.
+     Executable code: MIT (see ../LICENSE-MIT).
+     Text, illustrations, questions and explanations: CC-BY-4.0 (see ../LICENSE.md). -->
 <html lang="ko">
 <head>
-<!--head:start {"desc": "임시"}-->
+<!--head:start {"desc": "반도체 설계 핵심 용어 140여 개를 한국어·영어·약어로 검색하고, 전 범위에서 무작위로 뽑은 20문항 종합 퀴즈로 실력을 점검한다."}-->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>용어집 & 종합 퀴즈 · DesignBook</title>
-<meta name="description" content="임시">
+<meta name="description" content="반도체 설계 핵심 용어 140여 개를 한국어·영어·약어로 검색하고, 전 범위에서 무작위로 뽑은 20문항 종합 퀴즈로 실력을 점검한다.">
 <link rel="canonical" href="https://designbook.euiyun.com/chapters/glossary.html">
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 <meta name="theme-color" content="#6d3fd1">
@@ -13,21 +16,536 @@
 <meta property="og:site_name" content="DesignBook">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:title" content="용어집 &amp; 종합 퀴즈 · DesignBook">
-<meta property="og:description" content="임시">
+<meta property="og:description" content="반도체 설계 핵심 용어 140여 개를 한국어·영어·약어로 검색하고, 전 범위에서 무작위로 뽑은 20문항 종합 퀴즈로 실력을 점검한다.">
 <meta property="og:url" content="https://designbook.euiyun.com/chapters/glossary.html">
 <meta property="og:image" content="https://designbook.euiyun.com/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Chapter","LearningResource"],"@id":"https://designbook.euiyun.com/chapters/glossary.html#chapter","name":"용어집 & 종합 퀴즈","headline":"용어집 & 종합 퀴즈 · DesignBook","description":"임시","url":"https://designbook.euiyun.com/chapters/glossary.html","position":14,"inLanguage":"ko","isAccessibleForFree":true,"learningResourceType":"인터랙티브 교재","educationalLevel":"공대 학부","image":"https://designbook.euiyun.com/og.png","dateModified":"2026-10-02","isPartOf":{"@type":"Book","@id":"https://designbook.euiyun.com/#book","name":"DesignBook · 반도체 설계 교과서","url":"https://designbook.euiyun.com/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"DesignBook","item":"https://designbook.euiyun.com/"},{"@type":"ListItem","position":2,"name":"14. 용어집 & 종합 퀴즈","item":"https://designbook.euiyun.com/chapters/glossary.html"}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Chapter","LearningResource"],"@id":"https://designbook.euiyun.com/chapters/glossary.html#chapter","name":"용어집 & 종합 퀴즈","headline":"용어집 & 종합 퀴즈 · DesignBook","description":"반도체 설계 핵심 용어 140여 개를 한국어·영어·약어로 검색하고, 전 범위에서 무작위로 뽑은 20문항 종합 퀴즈로 실력을 점검한다.","url":"https://designbook.euiyun.com/chapters/glossary.html","position":14,"inLanguage":"ko","isAccessibleForFree":true,"learningResourceType":"인터랙티브 교재","educationalLevel":"공대 학부","image":"https://designbook.euiyun.com/og.png","dateModified":"2026-10-02","isPartOf":{"@type":"Book","@id":"https://designbook.euiyun.com/#book","name":"DesignBook · 반도체 설계 교과서","url":"https://designbook.euiyun.com/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"DesignBook","item":"https://designbook.euiyun.com/"},{"@type":"ListItem","position":2,"name":"14. 용어집 & 종합 퀴즈","item":"https://designbook.euiyun.com/chapters/glossary.html"}]}]}</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <link rel="stylesheet" href="../css/style.css">
 <script src="../js/common.js"></script>
 <!--head:end-->
+<style>
+  [hidden] { display: none !important; }
+  .gl-tools { display: grid; gap: 10px; margin-bottom: 18px; }
+  .gl-tools .row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+  .gl-tools .lbl { font-size: 13px; color: var(--text-dim); }
+  .gl-tools .seg { flex-wrap: wrap; }
+  .gl-tools .seg button { font-size: 12.5px; padding: 4px 9px; }
+  .gl-search { margin-bottom: 0 !important; }
+  .gl-count { font-size: 13px; color: var(--text-faint); margin-left: auto; }
+  #gl-list { max-height: min(78vh, 980px); overflow-y: auto; overscroll-behavior: contain; padding: 2px 6px 2px 2px; border-radius: 12px; }
+  .gl-group { position: sticky; top: 0; z-index: 1; background: var(--bg); font-family: var(--mono); font-weight: 700; font-size: 13px; color: var(--accent); letter-spacing: .06em; margin: 14px 0 0; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+  .gl-group:first-child { margin-top: 0; }
+  .gl-item h4 .abbr { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--accent-2); background: var(--accent-2-soft); border-radius: 5px; padding: 1px 6px; margin-left: 6px; vertical-align: 1px; }
+  .gl-item mark { background: color-mix(in srgb, var(--warn) 35%, transparent); color: inherit; border-radius: 3px; padding: 0 1px; }
+  .gl-empty { padding: 24px; text-align: center; color: var(--text-dim); border: 1px dashed var(--border); border-radius: 12px; }
+
+  .fq { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .fq-top { display: flex; justify-content: space-between; gap: 10px; padding: 12px 18px 8px; font-size: 13px; color: var(--text-dim); font-family: var(--mono); }
+  .fq-bar { height: 6px; background: var(--surface-2); margin: 0 18px; border-radius: 3px; overflow: hidden; }
+  .fq-bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .3s ease; }
+  .fq-card, .fq-result { padding: 18px 20px 20px; }
+  .fq-ch { font-size: 12px; font-weight: 700; color: var(--accent); letter-spacing: .04em; margin-bottom: 6px; }
+  .fq-q { font-weight: 700; font-size: 17px; margin: 0 0 14px !important; }
+  .fq-opts { display: grid; gap: 8px; }
+  .fq-opt { text-align: left; font: inherit; font-size: 15px; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; line-height: 1.5; display: flex; gap: 10px; align-items: baseline; }
+  .fq-opt .n { font-family: var(--mono); font-size: 12px; color: var(--text-faint); flex: none; }
+  .fq-opt:hover:not(:disabled) { border-color: var(--accent); }
+  .fq-opt:disabled { cursor: default; }
+  .fq-opt.right { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 15%, transparent); font-weight: 600; }
+  .fq-opt.wrong { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, transparent); }
+  .fq-exp { margin-top: 12px; font-size: 15px; color: var(--text-dim); padding: 12px 14px; border-radius: 8px; background: var(--surface); }
+  .fq-exp b.ok { color: var(--ok); } .fq-exp b.bad { color: var(--bad); }
+  .fq-nav { display: flex; justify-content: flex-end; margin-top: 14px; }
+  .fq-result { text-align: center; }
+  .fq-rank { font-size: 13px; letter-spacing: .12em; color: var(--text-faint); font-weight: 700; }
+  .fq-title { font-size: clamp(24px, 5vw, 32px); font-weight: 800; letter-spacing: -0.02em; margin: 4px 0; background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .fq-big { font-family: var(--mono); font-size: 40px; font-weight: 700; }
+  .fq-big small { font-size: 18px; color: var(--text-dim); }
+  .fq-chart { margin: 16px 0; text-align: left; background: var(--canvas-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .fq-chart canvas { display: block; width: 100%; }
+  .fq-review { text-align: left; font-size: 14px; color: var(--text-dim); margin: 0 0 16px; }
+  .fq-review a { font-weight: 600; }
+</style>
 </head>
 <body data-chapter="glossary">
-<main class="chapter"><header class="chapter-hero"><div class="eyebrow">Chapter 14</div><h1>용어집</h1></header>
-<section><h2>테스트</h2><p>준비 중</p></section></main>
-</body></html>
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter 14</div>
+    <h1>용어집 &amp; 종합 퀴즈</h1>
+    <p class="lead">칩 설계는 약어의 숲이다. RTL, FSM, LEC, SDC, CPP, OD, HPWL, CTS, STA, WNS, NLDM, OCV, IR, EM, DRC, LVS, OPC, SRAF, EPE, MDP, GDS… 이 장은 책 전체에 흩어진 핵심 용어를 한곳에 모은 사전이자, RTL에서 마스크까지 전 범위를 점검하는 마무리 시험이다.</p>
+    <ul class="objectives">
+      <li>한국어·영어·약어 어느 쪽으로든 용어를 찾아 정의와 해당 챕터로 바로 이동할 수 있다.</li>
+      <li>RTL·합성·표준 셀·배치·CTS·배선·타이밍·전력·검증·OPC·마스크까지 각 장의 핵심 개념을 스스로 점검한다.</li>
+      <li>틀린 문제의 챕터를 확인하고 약한 부분을 다시 공부할 계획을 세운다.</li>
+    </ul>
+    <p style="margin-top:16px"><a href="#glossary">→ 용어집 바로 가기</a> · <a href="#final-quiz">→ 종합 퀴즈 바로 풀기</a></p>
+  </header>
+
+  <section id="glossary">
+    <h2>용어집</h2>
+    <p>검색창에 한국어(예: <code>슬랙</code>), 영어(예: <code>skew</code>), 약어(예: <code>NLDM</code>) 중 아무것이나 입력하면 바로 걸러진다. 정의 본문도 검색 대상이다. 챕터 칩으로 범위를 좁히고, 가나다순 또는 챕터순으로 묶어 볼 수 있다.</p>
+    <div class="gl-tools">
+      <input type="search" class="gl-search" id="gl-q" placeholder="용어 검색: 예) 홀드 시간, fracturing, LVS" autocomplete="off" aria-label="용어 검색">
+      <div class="row">
+        <span class="lbl">챕터</span>
+        <div class="seg" id="gl-ch">
+          <button data-value="all" class="on">전체</button>
+          <button data-value="overview">01 개요</button>
+          <button data-value="rtl">02 RTL</button>
+          <button data-value="synthesis">03 합성</button>
+          <button data-value="stdcell">04 표준 셀</button>
+          <button data-value="place">05 배치</button>
+          <button data-value="cts">06 CTS</button>
+          <button data-value="route">07 배선</button>
+          <button data-value="timing">08 타이밍</button>
+          <button data-value="power">09 전력</button>
+          <button data-value="signoff">10 DRC·LVS</button>
+          <button data-value="opc">11 OPC</button>
+          <button data-value="mask">12 마스크</button>
+          <button data-value="lab">13 실험실</button>
+        </div>
+      </div>
+      <div class="row">
+        <span class="lbl">정렬</span>
+        <div class="seg" id="gl-sort"><button data-value="kor" class="on">가나다순</button><button data-value="ch">챕터순</button></div>
+        <span class="gl-count" id="gl-count"></span>
+      </div>
+    </div>
+    <div class="gl-list" id="gl-list" aria-live="polite"></div>
+  </section>
+
+  <section id="final-quiz">
+    <h2>종합 퀴즈</h2>
+    <p>전 챕터 문제 은행에서 무작위로 고른 20문항이다. 한 문제씩 풀고 나면 해설과 관련 챕터 링크가 나온다. 끝까지 풀면 챕터별 정답률 그래프와 “등급”을 보여 준다. 다시 풀기를 누르면 문제와 보기 순서가 새로 섞인다.</p>
+    <div class="fq" id="fq">
+      <div class="fq-top"><span id="fq-count">문제 1 / 20</span><span id="fq-score">정답 0</span></div>
+      <div class="fq-bar"><i id="fq-fill"></i></div>
+      <div class="fq-card" id="fq-card">
+        <div class="fq-ch" id="fq-ch"></div>
+        <p class="fq-q" id="fq-q"></p>
+        <div class="fq-opts" id="fq-opts"></div>
+        <div class="fq-exp" id="fq-exp" hidden aria-live="polite"></div>
+        <div class="fq-nav"><button class="btn primary" id="fq-next" hidden>다음 문제 →</button></div>
+      </div>
+      <div class="fq-result" id="fq-result" hidden>
+        <div class="fq-rank">YOUR RANK</div>
+        <div class="fq-title" id="fq-title"></div>
+        <div class="fq-big" id="fq-big"></div>
+        <p id="fq-msg" style="color:var(--text-dim)"></p>
+        <div class="fq-chart"><canvas id="cv-fq"></canvas></div>
+        <p class="fq-review" id="fq-review"></p>
+        <button class="btn primary" id="fq-retry">다시 풀기 (문제 섞기)</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>마치며</h2>
+    <ol>
+      <li>칩 설계는 <b>추상화를 한 단계씩 내려가는</b> 일이다. 코드 → 게이트 → 셀 → 배치 → 배선 → 다각형 → 마스크.</li>
+      <li>내려갈 때마다 정보가 더해진다. 합성은 지연 표를, 배치는 위치를, 배선은 RC를, OPC는 광학을 더하고, 그때마다 타이밍·전력을 다시 계산한다.</li>
+      <li>검증은 겹겹이다. 시뮬레이션·등가성·STA·IR/EM·DRC·LVS·리소 검사 중 하나라도 비면 첫 실리콘이 실패한다.</li>
+      <li>설계 규칙과 셀 구조는 공정의 한계를 번역한 것이다. 레이아웃의 사각형 하나하나가 ProcessBook의 공정 단계가 된다.</li>
+      <li>PPA는 공정과 설계가 함께 만든다(DTCO). 트랙 수, 단일 피치, 후면 전력 공급이 그 최근의 답이다.</li>
+    </ol>
+    <p style="margin-top:12px">제조 쪽 이야기가 궁금하다면 자매편 <a href="https://processbook.euiyun.com/">ProcessBook · 반도체 제조 공정 교과서</a>로 이어 가자.</p>
+  </section>
+</main>
+<script>
+(function () {
+  "use strict";
+  /* =============================================================== 용어 데이터 */
+  var TERMS = [
+    // 01 개요
+    { ko: "설계 흐름", en: "Design flow", abbr: "", def: "사양에서 마스크 데이터까지 이어지는 단계의 묶음. RTL → 합성 → 배치·배선 → 사인오프 → 테이프아웃 순서이며, 타이밍·전력이 맞지 않으면 앞 단계로 되돌아가는 반복이 많다.", ch: "overview" },
+    { ko: "프런트엔드 설계", en: "Front-end design", abbr: "", def: "아키텍처·RTL 작성·기능 검증·논리 합성까지 논리 중심의 설계 구간.", ch: "overview" },
+    { ko: "백엔드 설계", en: "Back-end (physical) design", abbr: "", def: "플로어플랜·배치·CTS·배선·물리 검증처럼 실제 기하 모양을 다루는 구간. 결과물은 GDS 파일이다.", ch: "overview" },
+    { ko: "PPA", en: "Power, Performance, Area", abbr: "PPA", def: "전력·성능·면적. 칩 설계의 세 목표로 서로 맞바꾼다. 클럭 목표를 올리면 면적과 전력이 함께 는다.", ch: "overview" },
+    { ko: "PDK", en: "Process Design Kit", abbr: "PDK", def: "파운드리가 설계자에게 주는 공정 정보 묶음. 설계 규칙(DRM), 소자 모델, 테크 파일, 검증 규칙 덱, 표준 셀·IP 라이브러리가 들어 있다.", ch: "overview" },
+    { ko: "EDA", en: "Electronic Design Automation", abbr: "EDA", def: "설계 자동화 소프트웨어. 시뮬레이터, 합성기, 배치·배선기, STA·DRC·LVS 도구 등.", ch: "overview" },
+    { ko: "NRE", en: "Non-Recurring Engineering", abbr: "NRE", def: "설계 인건비·EDA·IP·마스크 세트처럼 칩 한 번 개발에 드는 고정 비용. 생산량으로 나눠 칩당 원가에 들어간다.", ch: "overview" },
+    { ko: "다이 수율", en: "Die yield", abbr: "", def: "양품 다이의 비율. 포아송 모델 Y = e^(−A·D₀)처럼 면적 A가 클수록 지수적으로 낮아져, 면적이 원가를 크게 좌우한다.", ch: "overview" },
+    // 02 RTL
+    { ko: "RTL", en: "Register-Transfer Level", abbr: "RTL", def: "레지스터와 그 사이 조합 논리로 회로를 기술하는 추상화 수준. Verilog·VHDL 코드로 쓴다.", ch: "rtl" },
+    { ko: "하드웨어 기술 언어", en: "Hardware Description Language", abbr: "HDL", def: "회로를 기술하는 언어. 문장이 차례로 실행되지 않고 동시에 존재하는 하드웨어를 뜻한다. Verilog, SystemVerilog, VHDL.", ch: "rtl" },
+    { ko: "조합 논리", en: "Combinational logic", abbr: "", def: "출력이 현재 입력만으로 정해지는 논리. 기억 소자가 없다.", ch: "rtl" },
+    { ko: "순차 논리", en: "Sequential logic", abbr: "", def: "출력이 입력과 내부 상태에 의존하는 논리. 플립플롭 같은 기억 소자를 가진다.", ch: "rtl" },
+    { ko: "D 플립플롭", en: "D flip-flop", abbr: "DFF", def: "클럭 엣지 순간의 D 입력을 저장해 다음 엣지까지 Q로 내보내는 소자. 동기 설계의 기본 단위.", ch: "rtl" },
+    { ko: "non-blocking 대입", en: "Non-blocking assignment (<=)", abbr: "", def: "블록 안의 오른쪽 값을 모두 읽은 뒤 끝에서 한꺼번에 갱신하는 Verilog 대입. 순차 블록에 쓴다.", ch: "rtl" },
+    { ko: "래치 추론", en: "Latch inference", abbr: "", def: "조합 블록에서 일부 경우에 값을 주지 않아 합성기가 기억 소자(래치)를 만드는 현상. 대부분 실수다.", ch: "rtl" },
+    { ko: "유한 상태 기계", en: "Finite State Machine", abbr: "FSM", def: "상태 레지스터, 다음 상태 논리, 출력 논리로 된 제어 회로. 출력이 상태에만 달리면 무어, 입력에도 달리면 밀리 기계.", ch: "rtl" },
+    { ko: "원-핫 인코딩", en: "One-hot encoding", abbr: "", def: "상태마다 플롭 하나를 두고 하나만 1로 두는 상태 인코딩. 플롭은 늘지만 다음 상태 논리가 단순하고 빠르다.", ch: "rtl" },
+    { ko: "테스트벤치", en: "Testbench", abbr: "", def: "설계(DUT)에 자극을 넣고 출력을 기대값과 비교하는 검증용 코드. 합성되지 않는다.", ch: "rtl" },
+    { ko: "기능 커버리지", en: "Functional coverage", abbr: "", def: "검증이 관심 상황 목록을 얼마나 경험했는지 재는 지표. 무작위 자극만으로는 드문 코너 케이스가 잘 채워지지 않는다.", ch: "rtl" },
+    { ko: "어서션", en: "Assertion (SVA)", abbr: "SVA", def: "설계가 항상 지켜야 할 성질을 코드로 적어 시뮬레이션·형식 검증에서 자동 검사하게 한 것.", ch: "rtl" },
+    { ko: "형식 검증", en: "Formal verification", abbr: "", def: "시뮬레이션 대신 수학적으로 모든 입력에 대해 성질이나 등가성을 증명하는 검증.", ch: "rtl" },
+    // 03 합성
+    { ko: "논리 합성", en: "Logic synthesis", abbr: "", def: "RTL을 표준 셀 게이트 넷리스트로 바꾸는 과정. 해석 → 불 최적화 → 기술 매핑 → 사이징을 거친다.", ch: "synthesis" },
+    { ko: "카르노 맵", en: "Karnaugh map", abbr: "", def: "진리표를 인접 칸이 한 변수만 다르도록 배열한 표. 이웃한 1을 2의 거듭제곱 크기로 묶어 최소 곱의 합을 찾는다.", ch: "synthesis" },
+    { ko: "퀸–매클러스키 방법", en: "Quine–McCluskey method", abbr: "", def: "주항(prime implicant)을 체계적으로 구하고 최소 커버를 고르는 2단 논리 최소화 알고리즘.", ch: "synthesis" },
+    { ko: "기술 매핑", en: "Technology mapping", abbr: "", def: "일반 논리 그래프를 라이브러리의 실제 셀로 덮는 단계. 트리 커버링 동적 계획법으로 면적이나 지연을 최소화한다.", ch: "synthesis" },
+    { ko: "Liberty 파일", en: "Liberty (.lib)", abbr: ".lib", def: "셀마다 면적·핀 커패시턴스·기능·지연 표·전력 표를 담은 라이브러리 형식. 코너마다 따로 있다.", ch: "synthesis" },
+    { ko: "AOI 게이트", en: "AND-OR-Invert gate", abbr: "AOI", def: "AND와 OR와 반전을 한 단으로 구현한 복합 CMOS 게이트. 같은 기능을 NAND 여러 개보다 작고 빠르게 만든다.", ch: "synthesis" },
+    { ko: "논리적 노력", en: "Logical effort", abbr: "", def: "게이트 지연을 d = gh + p로 나눠 보는 방법. 경로 노력 F를 단마다 고르게 나누면(단 노력 ≈ 4) 지연이 최소가 된다.", ch: "synthesis" },
+    { ko: "FO4", en: "Fanout-of-4 delay", abbr: "FO4", def: "자기 크기 4배의 부하를 구동하는 인버터의 지연. 공정 속도를 나타내는 단위로 쓴다(EDU45 ≈ 15 ps).", ch: "synthesis" },
+    { ko: "SDC", en: "Synopsys Design Constraints", abbr: "SDC", def: "클럭·입출력 지연·부하·예외 경로 같은 타이밍 제약을 적는 형식. 합성·배치·STA가 모두 읽는다.", ch: "synthesis" },
+    { ko: "등가성 검사", en: "Logic equivalence checking", abbr: "LEC", def: "두 넷리스트(또는 RTL과 넷리스트)가 같은 논리 함수인지 형식적으로 증명하는 검사.", ch: "synthesis" },
+    // 04 표준 셀
+    { ko: "표준 셀", en: "Standard cell", abbr: "", def: "높이가 같고 전원 레일 위치가 같은, 미리 그려 검증한 게이트 레이아웃. 이어 붙여 디지털 회로를 만든다.", ch: "stdcell" },
+    { ko: "트랙", en: "Track", abbr: "", def: "배선 피치 하나 크기의 배선 자리. 셀 높이를 트랙 수로 말한다(EDU45: 9트랙 = 9 × 140 nm).", ch: "stdcell" },
+    { ko: "CPP", en: "Contacted Poly Pitch", abbr: "CPP", def: "콘택을 둘 수 있는 게이트(폴리) 피치. 셀 폭의 단위이며 공정 세대를 비교하는 핵심 숫자.", ch: "stdcell" },
+    { ko: "활성 영역", en: "Active / Oxide Definition", abbr: "OD", def: "트랜지스터가 들어갈 실리콘 섬을 정의하는 레이어. 그리지 않은 곳은 STI 산화막이 된다(마스크 1).", ch: "stdcell" },
+    { ko: "폴리 레이어", en: "Poly (PO)", abbr: "PO", def: "게이트를 정의하는 레이어. 활성 영역과 겹친 곳이 채널이며, 폴리 폭이 게이트 길이 L이다(마스크 4).", ch: "stdcell" },
+    { ko: "N+/P+ 주입 레이어", en: "NPLUS / PPLUS implant", abbr: "NP/PP", def: "소스·드레인 도핑 종류를 정하는 레이어. 게이트·스페이서가 자기 정렬 마스크 역할을 하므로 성글게 그린다(마스크 5~8).", ch: "stdcell" },
+    { ko: "스틱 다이어그램", en: "Stick diagram", abbr: "", def: "레이어를 색 있는 선으로만 그린 레이아웃 스케치. 트랜지스터 배치와 연결 순서를 정할 때 쓴다.", ch: "stdcell" },
+    { ko: "오일러 경로", en: "Euler path", abbr: "", def: "그래프의 모든 변을 한 번씩 지나는 경로. NMOS·PMOS 망에서 같은 게이트 순서의 오일러 경로를 찾으면 확산을 끊지 않고 그릴 수 있다.", ch: "stdcell" },
+    { ko: "확산 공유", en: "Diffusion sharing", abbr: "", def: "이웃 트랜지스터가 소스·드레인 확산을 나눠 쓰는 것. 면적과 접합 커패시턴스를 줄인다.", ch: "stdcell" },
+    { ko: "엔드캡", en: "Poly endcap", abbr: "", def: "게이트 폴리가 활성 영역 밖으로 더 뻗은 부분. 선 끝 후퇴를 보상해 소스·드레인 단락을 막는다.", ch: "stdcell" },
+    { ko: "트랜지스터 밀도", en: "Transistor density (MTr/mm²)", abbr: "", def: "0.6 × NAND2 밀도 + 0.4 × 스캔 플립플롭 밀도로 계산하는 공정 비교 지표(Bohr, 2017).", ch: "stdcell" },
+    { ko: "DTCO", en: "Design-Technology Co-Optimization", abbr: "DTCO", def: "셀 구조·설계 규칙과 공정을 함께 최적화하는 것. 트랙 수 감소, 확산 단절, 매립 전원 레일 등이 그 결과다.", ch: "stdcell" },
+    // 05 배치
+    { ko: "플로어플랜", en: "Floorplan", abbr: "", def: "다이·코어 크기, 입출력, 매크로 위치, 전원망 골격, 셀 행을 정하는 첫 물리 설계 단계.", ch: "place" },
+    { ko: "이용률", en: "Utilization", abbr: "", def: "코어 면적 중 셀이 차지하는 비율. 높으면 면적이 작지만 배선이 혼잡해진다(보통 60~80%).", ch: "place" },
+    { ko: "LEF", en: "Library Exchange Format", abbr: "LEF", def: "셀의 크기·핀 위치·배선 차단 영역 같은 추상 정보와 배선층 규칙을 담은 형식. 배치·배선기가 읽는다.", ch: "place" },
+    { ko: "DEF", en: "Design Exchange Format", abbr: "DEF", def: "배치·배선 결과(셀 위치, 배선 모양)를 담는 형식.", ch: "place" },
+    { ko: "HPWL", en: "Half-Perimeter Wire Length", abbr: "HPWL", def: "넷의 핀들을 감싸는 사각형 둘레의 절반. 배치 단계에서 배선 길이를 빠르게 추정하는 지표.", ch: "place" },
+    { ko: "시뮬레이티드 어닐링", en: "Simulated annealing", abbr: "SA", def: "나빠지는 이동도 온도에 따른 확률로 받아들이며 온도를 낮춰 가는 최적화. 배치 문제에 오래 쓰였다.", ch: "place" },
+    { ko: "이차 배치", en: "Quadratic placement", abbr: "", def: "넷 길이 제곱의 합을 최소화하는 선형 방정식을 풀어 셀 좌표를 구하는 전역 배치 방법.", ch: "place" },
+    { ko: "합법화", en: "Legalization", abbr: "", def: "전역 배치 결과를 행·사이트 격자 위에 겹침 없이 놓는 단계. 변위를 최소화한다(Tetris, Abacus).", ch: "place" },
+    { ko: "탭 셀", en: "Tap cell", abbr: "", def: "웰과 기판을 전원에 연결하는 셀. 래치업 방지를 위해 일정 간격마다 넣는다.", ch: "place" },
+    // 06 CTS
+    { ko: "클럭 트리 합성", en: "Clock Tree Synthesis", abbr: "CTS", def: "클럭 소스에서 모든 플롭까지 버퍼와 배선으로 트리를 만들어 지연과 스큐를 맞추는 단계.", ch: "cts" },
+    { ko: "클럭 스큐", en: "Clock skew", abbr: "", def: "두 플롭에 클럭이 도착하는 시각의 차. 셋업에 유리하면 홀드에 불리하다.", ch: "cts" },
+    { ko: "클럭 지연", en: "Clock latency (insertion delay)", abbr: "", def: "클럭 소스에서 플롭 클럭 핀까지 걸리는 시간.", ch: "cts" },
+    { ko: "지터", en: "Jitter", abbr: "", def: "클럭 엣지 시각의 주기별 무작위 흔들림. PLL·전원 잡음에서 온다.", ch: "cts" },
+    { ko: "H-트리", en: "H-tree", abbr: "", def: "H자를 재귀적으로 붙여 모든 끝점까지 거리를 같게 만든 대칭 클럭 분배 구조.", ch: "cts" },
+    { ko: "유용한 스큐", en: "Useful skew", abbr: "", def: "일부러 스큐를 줘 느린 단에 시간을 빌려주는 기법.", ch: "cts" },
+    { ko: "클럭 게이팅 셀", en: "Integrated Clock Gating cell", abbr: "ICG", def: "enable이 없을 때 클럭을 막는 셀. 래치와 AND를 묶어 글리치 없이 동작한다.", ch: "cts" },
+    { ko: "메타안정성", en: "Metastability", abbr: "", def: "비동기 신호가 셋업·홀드 창 안에서 바뀌어 플롭 출력이 한동안 0도 1도 아닌 상태. 동기화기로 확률을 줄인다.", ch: "cts" },
+    { ko: "CPPR", en: "Common Path Pessimism Removal", abbr: "CPPR", def: "런치·캡처 클럭이 공유하는 경로를 서로 다르게 디레이트한 비관성을 되돌려 주는 계산.", ch: "cts" },
+    // 07 배선
+    { ko: "금속 스택", en: "Metal stack", abbr: "", def: "트랜지스터 위 배선층 묶음. 위로 갈수록 두껍고 성글며 층마다 선호 방향이 번갈아 정해져 있다.", ch: "route" },
+    { ko: "선호 방향", en: "Preferred direction", abbr: "", def: "한 배선층에서 주로 쓰는 방향(수평 또는 수직). 방향을 바꿀 때는 비아로 층을 옮긴다.", ch: "route" },
+    { ko: "전역 배선", en: "Global routing", abbr: "", def: "GCell 격자 위에서 각 넷이 지날 영역과 혼잡을 정하는 단계.", ch: "route" },
+    { ko: "상세 배선", en: "Detailed routing", abbr: "", def: "트랙·비아 위치를 정하고 모든 설계 규칙을 지키는 배선 단계.", ch: "route" },
+    { ko: "Lee 알고리즘", en: "Lee maze routing", abbr: "", def: "격자 위 너비 우선 파면 확장과 역추적으로 최단 경로를 찾는 미로 배선 알고리즘(1961).", ch: "route" },
+    { ko: "A* 탐색", en: "A* search", abbr: "", def: "지금까지 비용에 목표까지 추정 거리를 더해 탐색 순서를 정하는 최단 경로 탐색. 탐색 칸을 줄인다.", ch: "route" },
+    { ko: "PathFinder", en: "Negotiated congestion routing", abbr: "", def: "겹침을 허용해 배선한 뒤 혼잡한 자원의 비용을 올리고 다시 배선하기를 반복하는 알고리즘.", ch: "route" },
+    { ko: "혼잡도", en: "Routing congestion", abbr: "", def: "배선 자원 수요가 용량을 넘는 정도. 오버플로가 많으면 우회·규칙 위반·타이밍 악화가 생긴다.", ch: "route" },
+    { ko: "안테나 효과", en: "Antenna effect", abbr: "", def: "플라즈마 식각 중 게이트에 연결된 금속이 모은 전하가 게이트 절연막을 손상시키는 현상.", ch: "route" },
+    { ko: "비기본 배선 규칙", en: "Non-Default Rule", abbr: "NDR", def: "클럭 같은 민감한 넷에 폭·간격을 넓혀 주는 배선 규칙.", ch: "route" },
+    // 08 타이밍
+    { ko: "정적 타이밍 분석", en: "Static Timing Analysis", abbr: "STA", def: "입력 값 없이 타이밍 그래프에서 최악·최선 도착 시간을 전파해 모든 경로의 타이밍을 검증하는 방법.", ch: "timing" },
+    { ko: "셋업 시간", en: "Setup time", abbr: "", def: "클럭 엣지 전에 데이터가 안정되어 있어야 하는 최소 시간.", ch: "timing" },
+    { ko: "홀드 시간", en: "Hold time", abbr: "", def: "클럭 엣지 뒤에 데이터가 유지되어야 하는 최소 시간. 홀드 위반은 클럭을 늦춰도 고쳐지지 않는다.", ch: "timing" },
+    { ko: "슬랙", en: "Slack", abbr: "", def: "요구 시간 − 도착 시간. 음수면 타이밍 위반이다.", ch: "timing" },
+    { ko: "WNS · TNS", en: "Worst / Total Negative Slack", abbr: "WNS", def: "가장 나쁜 슬랙과, 음수 슬랙을 모두 더한 값. 타이밍 수렴 상태를 나타낸다.", ch: "timing" },
+    { ko: "임계 경로", en: "Critical path", abbr: "", def: "슬랙이 가장 작은 경로. 회로의 최대 동작 주파수를 정한다.", ch: "timing" },
+    { ko: "NLDM", en: "Non-Linear Delay Model", abbr: "NLDM", def: "셀 지연·출력 슬루를 입력 슬루와 출력 부하의 2차원 표로 주고 보간하는 지연 모델.", ch: "timing" },
+    { ko: "슬루", en: "Slew (transition time)", abbr: "", def: "신호가 10%→90%(또는 20→80%)로 바뀌는 데 걸리는 시간. 다음 셀의 지연에 영향을 준다.", ch: "timing" },
+    { ko: "엘모어 지연", en: "Elmore delay", abbr: "", def: "RC 트리 지연을 경로 저항 × 하류 커패시턴스의 합으로 근사한 값.", ch: "timing" },
+    { ko: "리피터", en: "Repeater", abbr: "", def: "긴 배선 중간에 넣는 버퍼. L²에 비례하던 배선 지연을 L에 비례하게 만든다.", ch: "timing" },
+    { ko: "PVT 코너", en: "Process-Voltage-Temperature corner", abbr: "PVT", def: "공정 편차(SS·TT·FF…)·전압·온도의 조합. 셋업은 느린 코너, 홀드는 빠른 코너에서 본다.", ch: "timing" },
+    { ko: "OCV", en: "On-Chip Variation", abbr: "OCV", def: "칩 안 위치에 따른 편차. 런치·캡처 경로에 서로 다른 디레이트를 줘 반영한다(AOCV, POCV).", ch: "timing" },
+    { ko: "SPEF", en: "Standard Parasitic Exchange Format", abbr: "SPEF", def: "추출한 배선 저항·커패시턴스를 담는 형식. 배선 후 STA가 읽는다.", ch: "timing" },
+    { ko: "ECO", en: "Engineering Change Order", abbr: "ECO", def: "설계 막바지나 마스크 제작 후에 하는 작은 수정. 업사이징·버퍼 삽입·금속 층만 바꾸는 금속 ECO 등.", ch: "timing" },
+    { ko: "거짓 경로", en: "False path", abbr: "", def: "구조상 존재하지만 실제로는 활성화될 수 없는 경로. SDC로 STA에서 제외한다.", ch: "timing" },
+    // 09 전력
+    { ko: "동적 전력", en: "Dynamic power", abbr: "", def: "노드 충방전에 쓰는 전력 αCV²f. 전압의 제곱에 비례한다.", ch: "power" },
+    { ko: "활동률", en: "Activity factor", abbr: "α", def: "한 클럭에 노드가 0→1로 바뀌는 확률. 클럭은 1, 일반 논리는 0.1 안팎.", ch: "power" },
+    { ko: "누설 전력", en: "Leakage power", abbr: "", def: "꺼진 트랜지스터로 흐르는 전류의 전력. 문턱 전압에 지수적으로, 온도에 강하게 의존한다.", ch: "power" },
+    { ko: "서브문턱 기울기", en: "Subthreshold swing", abbr: "S", def: "누설 전류를 10배 바꾸는 데 필요한 게이트 전압(실온 이론 한계 60 mV/dec).", ch: "power" },
+    { ko: "멀티 Vt", en: "Multi-threshold voltage", abbr: "LVT/SVT/HVT", def: "문턱 전압이 다른 셀을 섞어 쓰는 기법. 임계 경로만 빠른 LVT, 나머지는 누설이 적은 HVT.", ch: "power" },
+    { ko: "알파 파워 법칙", en: "Alpha-power law", abbr: "", def: "속도 포화를 반영한 구동 전류 모델 I ∝ (V−Vt)^α. 지연 ∝ V/(V−Vt)^α.", ch: "power" },
+    { ko: "DVFS", en: "Dynamic Voltage and Frequency Scaling", abbr: "DVFS", def: "작업량에 맞춰 전압과 주파수를 실시간으로 함께 바꾸는 저전력 기법.", ch: "power" },
+    { ko: "파워 게이팅", en: "Power gating", abbr: "", def: "쓰지 않는 블록의 전원을 헤더·풋터 스위치로 끊어 누설을 없애는 기법. 리텐션·고립 셀이 필요하다.", ch: "power" },
+    { ko: "UPF", en: "Unified Power Format", abbr: "UPF", def: "전원 도메인·스위치·레벨 시프터·고립 같은 전원 의도를 기술하는 표준(IEEE 1801).", ch: "power" },
+    { ko: "IR 드롭", en: "IR drop", abbr: "", def: "전원망 저항에 전류가 흘러 셀이 받는 전압이 떨어지는 현상. 셀 지연을 늘린다.", ch: "power" },
+    { ko: "디캡 셀", en: "Decoupling capacitor cell", abbr: "decap", def: "순간 전류를 공급하는 국소 커패시터 셀. 동적 IR 드롭을 줄인다.", ch: "power" },
+    { ko: "블랙 식", en: "Black's equation", abbr: "", def: "전자 이동 수명 MTTF = A·J⁻ⁿ·exp(Ea/kT). 전류 밀도와 온도가 수명을 정한다.", ch: "power" },
+    // 10 사인오프
+    { ko: "설계 규칙", en: "Design rule", abbr: "DRM", def: "제조 가능성을 보장하는 기하 조건(폭·간격·둘러싸기·연장·밀도…). 공정 한계에서 나온다.", ch: "signoff" },
+    { ko: "DRC", en: "Design Rule Check", abbr: "DRC", def: "레이아웃이 설계 규칙을 지키는지 다각형 연산으로 검사하는 것.", ch: "signoff" },
+    { ko: "LVS", en: "Layout Versus Schematic", abbr: "LVS", def: "레이아웃에서 추출한 소자·연결이 회로도와 같은지 비교하는 검사.", ch: "signoff" },
+    { ko: "추출", en: "Extraction", abbr: "", def: "레이어 연산으로 레이아웃에서 트랜지스터(OD∩PO)와 넷을 인식하고, 기생 RC를 계산하는 것.", ch: "signoff" },
+    { ko: "둘러싸기 규칙", en: "Enclosure rule", abbr: "", def: "한 레이어가 다른 레이어를 일정 여유로 감싸야 하는 규칙. 층간 정렬(오버레이) 오차를 흡수한다.", ch: "signoff" },
+    { ko: "안테나 비율", en: "Antenna ratio", abbr: "", def: "게이트에 연결된 금속 면적 ÷ 게이트 면적. 한계를 넘으면 점프·다이오드로 고친다.", ch: "signoff" },
+    { ko: "밀도 규칙", en: "Density rule", abbr: "", def: "일정 창 안의 레이어 면적 비율을 범위 안에 두라는 규칙. CMP 균일도를 위한 것이다.", ch: "signoff" },
+    { ko: "더미 필", en: "Dummy fill", abbr: "", def: "밀도를 맞추려고 빈 곳에 넣는 전기적으로 떠 있는 무늬.", ch: "signoff" },
+    { ko: "ERC", en: "Electrical Rule Check", abbr: "ERC", def: "떠 있는 게이트, 연결되지 않은 웰, 전원 단락 같은 전기적 오류 검사.", ch: "signoff" },
+    { ko: "DFM", en: "Design for Manufacturability", abbr: "DFM", def: "최소 규칙을 넘어 수율이 좋은 모양으로 설계하는 활동. 권장 규칙, 리소 핫스팟, 임계 면적 분석.", ch: "signoff" },
+    // 11 OPC
+    { ko: "OPC", en: "Optical Proximity Correction", abbr: "OPC", def: "근접 효과를 보상해 웨이퍼 윤곽이 설계와 같아지도록 마스크 모양을 미리 비트는 것.", ch: "opc" },
+    { ko: "EPE", en: "Edge Placement Error", abbr: "EPE", def: "설계 에지와 인쇄된 윤곽 사이의 법선 방향 거리. OPC의 평가 지표.", ch: "opc" },
+    { ko: "선 끝 후퇴", en: "Line-end shortening", abbr: "", def: "선 끝이 빛을 덜 받아 설계보다 짧게 인쇄되는 현상.", ch: "opc" },
+    { ko: "등방-조밀 바이어스", en: "Iso-dense bias", abbr: "", def: "같은 폭이라도 고립 무늬와 조밀 무늬의 인쇄 CD가 다른 현상.", ch: "opc" },
+    { ko: "해머헤드", en: "Hammerhead", abbr: "", def: "선 끝을 길고 넓게 만드는 OPC 무늬. 선 끝 후퇴를 줄인다.", ch: "opc" },
+    { ko: "세리프", en: "Serif", abbr: "", def: "볼록 모서리에 덧붙이는 작은 사각형(오목 모서리는 안티세리프로 깎음). 모서리 둥글림을 줄인다.", ch: "opc" },
+    { ko: "SRAF", en: "Sub-Resolution Assist Feature", abbr: "SRAF", def: "인쇄되지 않을 만큼 가는 보조 무늬. 고립 무늬 주변을 조밀하게 보이게 해 공정 창을 넓힌다.", ch: "opc" },
+    { ko: "모델 기반 OPC", en: "Model-based OPC", abbr: "MBOPC", def: "에지를 조각으로 나누고 결상 모델로 EPE를 계산해 조각을 반복 이동하는 OPC.", ch: "opc" },
+    { ko: "ILT", en: "Inverse Lithography Technology", abbr: "ILT", def: "원하는 웨이퍼 윤곽에서 거꾸로 마스크를 화소 단위로 최적화하는 방법. 곡선 마스크가 나온다.", ch: "opc" },
+    { ko: "금지 피치", en: "Forbidden pitch", abbr: "", def: "이웃 무늬의 회절 간섭 때문에 공정 창이 특히 좁은 피치. 설계 규칙으로 금지한다.", ch: "opc" },
+    { ko: "PV 밴드", en: "Process-variation band", abbr: "", def: "초점·도즈 범위에서 인쇄 윤곽이 움직이는 띠. 넓은 곳이 리소 핫스팟이다.", ch: "opc" },
+    { ko: "제한된 설계 규칙", en: "Restricted Design Rules", abbr: "RDR", def: "게이트·금속을 한 방향·한 피치로 제한해 리소 공정 창을 키우는 설계 규칙.", ch: "opc" },
+    { ko: "MRC", en: "Mask Rule Check", abbr: "MRC", def: "OPC 후 마스크 데이터가 마스크 제작 규칙(최소 조각·간격)을 지키는지 검사.", ch: "opc" },
+    // 12 마스크
+    { ko: "테이프아웃", en: "Tape-out", abbr: "", def: "최종 레이아웃 데이터를 파운드리에 넘기는 일. 자기 테이프로 보내던 시절의 이름이 남았다.", ch: "mask" },
+    { ko: "GDSII", en: "Graphic Design System II", abbr: "GDS", def: "레이어 번호가 붙은 다각형과 셀 참조로 된 레이아웃 교환 형식(1978).", ch: "mask" },
+    { ko: "OASIS", en: "Open Artwork System Interchange Standard", abbr: "OASIS", def: "좌표 압축·반복 기술로 GDSII보다 훨씬 작은 레이아웃 형식(2004).", ch: "mask" },
+    { ko: "마스크 데이터 준비", en: "Mask Data Preparation", abbr: "MDP", def: "설계 레이어를 레이어 연산·더미·색 분해·OPC·분할로 마스크 데이터로 바꾸는 과정.", ch: "mask" },
+    { ko: "분할", en: "Fracturing", abbr: "", def: "다각형을 전자빔 묘화기가 찍을 수 있는 사각형·사다리꼴 샷으로 쪼개는 것.", ch: "mask" },
+    { ko: "VSB 묘화", en: "Variable Shaped Beam writing", abbr: "VSB", def: "빔 모양을 사각형으로 바꿔 한 샷씩 찍는 전자빔 마스크 묘화. 시간이 샷 수에 비례한다.", ch: "mask" },
+    { ko: "멀티빔 묘화기", en: "Multi-beam mask writer", abbr: "MBMW", def: "수십만 개 빔을 동시에 켜고 끄는 마스크 묘화기. 묘화 시간이 무늬 복잡도와 거의 무관하다.", ch: "mask" },
+    { ko: "레티클", en: "Reticle", abbr: "", def: "노광 장비에 넣는 마스크. 웨이퍼 크기의 4배로 그린 무늬를 축소 투영한다.", ch: "mask" },
+    { ko: "MPW", en: "Multi-Project Wafer", abbr: "MPW", def: "여러 고객의 설계를 한 마스크 세트에 모아 비용을 나누는 시제품 제작 방식(셔틀).", ch: "mask" },
+    { ko: "금속 ECO", en: "Metal-only ECO", abbr: "", def: "트랜지스터 층은 그대로 두고 일부 금속 마스크만 바꿔 예비 셀을 연결하는 수정.", ch: "mask" },
+    { ko: "예비 셀", en: "Spare cell", abbr: "", def: "나중의 금속 ECO를 위해 미리 칩 곳곳에 뿌려 둔 연결되지 않은 게이트.", ch: "mask" },
+    // 13 실험실
+    { ko: "레이어 연산", en: "Layer Boolean operation", abbr: "", def: "AND·OR·NOT·크기 조절로 레이어에서 새 레이어를 만드는 연산. DRC·추출·MDP의 기본 도구.", ch: "lab" },
+    { ko: "핀 라벨", en: "Pin label", abbr: "", def: "금속 위에 붙인 넷 이름 텍스트. LVS가 레이아웃 넷과 회로도 넷을 짝지을 닻이 된다.", ch: "lab" },
+  ];
+
+  /* =============================================================== 종합 퀴즈 문제 은행 */
+  var QUIZ = [
+    { ch: "overview", q: "설계자가 파운드리에 최종적으로 넘기는 것은?", o: ["RTL 코드", "게이트 넷리스트", "레이어별 다각형이 담긴 GDS/OASIS 파일", "SPICE 모델"], a: 2, e: "레이아웃의 다각형이 마스크가 된다. 나머지는 그 앞 단계의 산출물이다." },
+    { ch: "overview", q: "다이 면적이 두 배가 되면 포아송 수율 모델의 수율은?", o: ["절반", "제곱이 된다 (Y → Y²)", "그대로", "두 배"], a: 1, e: "Y = e^(−AD₀)이므로 A가 2배면 e^(−2AD₀) = Y²." },
+    { ch: "overview", q: "PDK에 들어 있지 않은 것은?", o: ["설계 규칙", "SPICE 소자 모델", "DRC/LVS 규칙 덱", "고객의 RTL 코드"], a: 3, e: "PDK는 파운드리가 공정 정보를 설계자에게 주는 묶음이다." },
+    { ch: "rtl", q: "always @(posedge clk) 블록 안에서 써야 하는 대입은?", o: ["=", "<=", "assign", "아무거나"], a: 1, e: "non-blocking이 모든 플롭의 동시 갱신을 표현한다." },
+    { ch: "rtl", q: "조합 always 블록에서 if에 else가 없으면?", o: ["합성 오류", "래치가 추론된다", "플롭이 생긴다", "아무 일 없다"], a: 1, e: "값을 주지 않은 경우 이전 값을 유지해야 하므로 래치가 생긴다." },
+    { ch: "rtl", q: "무작위 테스트만으로 커버리지가 100%에 잘 닿지 않는 이유는?", o: ["시뮬레이터가 느려서", "드문 코너 케이스의 발생 확률이 매우 낮아서", "테스트벤치가 합성되지 않아서", "어서션이 없어서"], a: 1, e: "확률이 10⁻⁴인 상황은 수만 번 돌려도 안 나올 수 있다. 제약·직접 테스트·형식 검증으로 닫는다." },
+    { ch: "synthesis", q: "기술 매핑 단계에서 하는 일은?", o: ["RTL 문법 검사", "일반 논리를 라이브러리 셀로 덮기", "셀 위치 정하기", "마스크 만들기"], a: 1, e: "NAND2·INV 등으로 분해한 그래프를 라이브러리 패턴으로 커버한다." },
+    { ch: "synthesis", q: "경로 노력 F = 256인 경로의 최적 단 수에 가장 가까운 것은?", o: ["2", "4", "8", "16"], a: 1, e: "N ≈ log₄F = log₄256 = 4." },
+    { ch: "synthesis", q: "CMOS에서 AND보다 NAND가 기본 게이트인 이유는?", o: ["NAND가 더 비싸서", "한 단의 CMOS 게이트는 본질적으로 반전형이라서", "AND는 합성할 수 없어서", "NAND가 더 느려서"], a: 1, e: "NMOS 풀다운·PMOS 풀업 한 단은 반전 함수를 만든다. AND는 NAND + INV 두 단이다." },
+    { ch: "stdcell", q: "레이아웃에서 트랜지스터 하나를 정의하는 것은?", o: ["CO ∩ M1", "OD ∩ PO", "NW ∩ PP", "PO ∩ M1"], a: 1, e: "활성 영역과 폴리가 겹친 곳이 채널이다." },
+    { ch: "stdcell", q: "OD 레이어로 만든 마스크 1로 STI를 만들 때 산화막이 채워지는 곳은?", o: ["OD 안", "OD 밖", "OD와 PO가 겹친 곳", "N-웰 안"], a: 1, e: "OD 위는 하드마스크로 보호되고 나머지가 식각되어 STI가 된다." },
+    { ch: "stdcell", q: "게이트 옆 질화막 스페이서를 정의하는 마스크는?", o: ["PO", "NP", "CO", "없다 (자기 정렬)"], a: 3, e: "컨포멀 증착 후 이방성 에치백으로 게이트 옆에만 남는다." },
+    { ch: "stdcell", q: "9트랙, M1 피치 140 nm인 셀의 높이는?", o: ["140 nm", "630 nm", "1260 nm", "1400 nm"], a: 2, e: "9 × 140 = 1260 nm." },
+    { ch: "stdcell", q: "NAND2 레이아웃에서 NMOS 확산 가운데 노드에 콘택이 없는 이유는?", o: ["규칙 위반이라서", "직렬 연결의 내부 노드라 다른 곳과 연결할 필요가 없어서", "PMOS가 대신해서", "면적이 부족해서"], a: 1, e: "확산 공유만으로 두 NMOS가 이어진다." },
+    { ch: "stdcell", q: "공정 세대 사이 셀 면적 축소에 가장 크게 기여해 온 것은?", o: ["CPP만 크게 축소", "트랙 수 감소와 금속 피치 축소", "셀 폭 증가", "웰 깊이"], a: 1, e: "CPP는 게이트·스페이서·콘택 때문에 천천히 줄고, 트랙 수(12T→6T→5T)와 피치가 높이를 줄였다." },
+    { ch: "place", q: "이용률을 0.95까지 올리면 생기는 주된 문제는?", o: ["누설 감소", "배선 혼잡과 타이밍 악화", "셀이 작아짐", "클럭이 빨라짐"], a: 1, e: "셀 사이 여유가 없어 배선 자원이 모자란다." },
+    { ch: "place", q: "HPWL은 무엇을 근사하는가?", o: ["셀 면적", "넷의 배선 길이", "클럭 스큐", "전력"], a: 1, e: "핀을 감싸는 사각형 둘레의 절반으로 배선 길이를 빠르게 추정한다." },
+    { ch: "place", q: "시뮬레이티드 어닐링이 나빠지는 이동도 받아들이는 이유는?", o: ["계산을 줄이려고", "국소 최솟값에서 빠져나오려고", "겹침을 만들려고", "온도를 올리려고"], a: 1, e: "높은 온도에서는 나쁜 이동도 허용해 더 넓게 탐색한다." },
+    { ch: "cts", q: "H-트리의 장점은?", o: ["배선이 가장 짧다", "모든 끝점까지 경로 길이가 같아 이론적 스큐가 0이다", "버퍼가 필요 없다", "전력이 0이다"], a: 1, e: "대칭 구조로 길이를 맞춘다. 실제 싱크 위치가 불균일하면 끝 연결에서 스큐가 생긴다." },
+    { ch: "cts", q: "클럭이 칩 동적 전력에서 큰 몫을 차지하는 이유는?", o: ["클럭 망은 활동률이 1이고 커패시턴스가 크기 때문", "클럭은 누설이 크기 때문", "클럭은 전압이 높기 때문", "클럭은 저항이 크기 때문"], a: 0, e: "매 주기 두 번 바뀌며 모든 플롭과 긴 배선을 구동한다. 클럭 게이팅이 중요한 이유다." },
+    { ch: "cts", q: "비동기 신호를 받을 때 플롭 두 개를 이어 쓰는 이유는?", o: ["속도를 높이려고", "메타안정 상태가 풀릴 시간을 줘 실패 확률을 낮추려고", "면적을 줄이려고", "스큐를 없애려고"], a: 1, e: "MTBF는 해결 시간에 지수적으로 는다." },
+    { ch: "route", q: "Lee 알고리즘과 비교해 A*가 줄이는 것은?", o: ["경로 길이", "탐색하는 칸 수", "비아 수", "설계 규칙"], a: 1, e: "목표까지 거리 휴리스틱으로 탐색 방향을 좁힌다. 경로 길이는 같다." },
+    { ch: "route", q: "금속층마다 선호 방향을 번갈아 정하는 이유는?", o: ["CMP를 쉽게", "한 층에 같은 방향 선을 촘촘히 깔고 방향 전환은 비아로 해 배선 자원을 효율적으로 쓰려고", "전력을 줄이려고", "노광을 피하려고"], a: 1, e: "방향이 섞이면 서로 막아 트랙 효율이 떨어진다. 리소에도 단방향이 유리하다." },
+    { ch: "route", q: "배선층 수를 늘리는 해법의 대가는?", o: ["타이밍 악화", "마스크와 공정 단계 증가로 원가 상승", "누설 증가", "LVS 실패"], a: 1, e: "금속 + 비아 한 쌍마다 마스크 2장 이상과 수십 공정 단계가 든다." },
+    { ch: "timing", q: "T = 1 ns, t_cq = 80 ps, 조합 최대 820 ps, t_setup = 50 ps, 스큐 0의 셋업 슬랙은?", o: ["+50 ps", "+100 ps", "−50 ps", "0"], a: 0, e: "(1000 − 50) − (80 + 820) = +50 ps." },
+    { ch: "timing", q: "홀드 위반을 고치는 정석은?", o: ["클럭 주기를 늘린다", "그 경로에 지연 셀을 넣는다", "셀을 업사이징한다", "전압을 올린다"], a: 1, e: "홀드는 주기와 무관하고, 빠른 경로를 늦춰야 한다." },
+    { ch: "timing", q: "셋업 분석에 주로 쓰는 코너는?", o: ["FF, 고전압, 저온", "SS, 저전압 (고온 또는 저온)", "TT, 정격", "아무 코너"], a: 1, e: "가장 느린 조건에서 최대 지연을 본다. 홀드는 빠른 코너에서." },
+    { ch: "timing", q: "NLDM 지연 표의 두 축은?", o: ["전압·온도", "입력 슬루·출력 부하", "면적·전력", "클럭·스큐"], a: 1, e: "코너는 라이브러리 파일 단위로 나뉜다." },
+    { ch: "timing", q: "리피터를 최적으로 넣은 긴 배선의 지연은 길이에 대해?", o: ["L²에 비례", "L에 비례", "√L에 비례", "일정"], a: 1, e: "토막마다 (L/k)², k개면 L²/k, 최적 k ∝ L이라 전체 ∝ L." },
+    { ch: "power", q: "V를 0.8배, f를 그대로 두면 동적 전력은?", o: ["0.8배", "0.64배", "0.51배", "그대로"], a: 1, e: "P ∝ V²." },
+    { ch: "power", q: "LVT 셀을 많이 쓰면?", o: ["누설이 지수적으로 증가한다", "동적 전력이 0이 된다", "면적이 줄어든다", "홀드가 개선된다"], a: 0, e: "문턱 전압이 낮을수록 서브문턱 누설이 10^(ΔVt/S)배로 는다." },
+    { ch: "power", q: "칩 가운데의 IR 드롭이 가장 큰 패키지 방식은?", o: ["플립칩 범프 배열", "가장자리 와이어 본딩", "후면 전력 공급", "모두 같다"], a: 1, e: "전류가 가장자리 패드까지 먼 길을 간다." },
+    { ch: "power", q: "블랙 식에서 전류 밀도를 절반으로 하면(n = 2) 수명은?", o: ["2배", "4배", "절반", "그대로"], a: 1, e: "MTTF ∝ J⁻²." },
+    { ch: "signoff", q: "콘택의 활성 영역 둘러싸기 규칙의 주된 근거는?", o: ["CMP 디싱", "층간 정렬(오버레이) 오차", "전자 이동", "누설"], a: 1, e: "두 마스크를 따로 찍으므로 어긋날 수 있다." },
+    { ch: "signoff", q: "DRC는 깨끗하지만 LVS가 실패하는 경우는?", o: ["M1 간격 60 nm", "콘택 크기 오류", "규칙에 맞게 그렸지만 소스 콘택 하나를 빠뜨림", "NP·PP 겹침"], a: 2, e: "만들 수 있는 모양이어도 다른 회로일 수 있다." },
+    { ch: "signoff", q: "LVS에서 병렬 트랜지스터 두 개(W 300 nm씩)는?", o: ["불일치", "W 600 nm 하나로 합쳐 비교", "무시", "직렬로 간주"], a: 1, e: "핑거로 나눠 그린 큰 트랜지스터가 대표적이다." },
+    { ch: "signoff", q: "밀도 규칙이 지키려는 공정은?", o: ["노광", "CMP 균일도", "이온 주입", "산화"], a: 1, e: "패턴 밀도가 CMP 연마량을 정한다." },
+    { ch: "opc", q: "OPC의 목표는?", o: ["마스크를 설계와 똑같이", "웨이퍼 윤곽을 설계와 같게", "마스크 꼭짓점 줄이기", "노광 시간 줄이기"], a: 1, e: "그래서 마스크는 설계보다 훨씬 복잡해진다." },
+    { ch: "opc", q: "SRAF는?", o: ["인쇄되는 더미", "인쇄되지 않는 보조 무늬로 고립 무늬의 공정 창을 넓힌다", "레지스트 첨가제", "마스크 결함"], a: 1, e: "해상 한계 아래 폭이라 찍히지 않아야 한다." },
+    { ch: "opc", q: "모델 기반 OPC에서 조각을 짧게 할수록?", o: ["EPE는 작아지고 마스크 꼭짓점·묘화 샷이 는다", "EPE가 커진다", "노광이 빨라진다", "아무 차이 없다"], a: 0, e: "정확도와 마스크 비용의 맞바꿈이다." },
+    { ch: "opc", q: "고립 선이 조밀 선보다 가늘게 찍히는 현상은?", o: ["선 끝 후퇴", "등방-조밀 바이어스", "브리징", "디싱"], a: 1, e: "이웃 무늬가 주는 배경 빛의 차이 때문이다." },
+    { ch: "mask", q: "GDSII 파일이 작게 유지되는 핵심은?", o: ["압축 알고리즘", "셀 참조(계층)", "레이어 수 제한", "텍스트 형식"], a: 1, e: "같은 셀을 한 번 정의하고 위치만 참조한다. OASIS는 여기에 좌표 압축을 더했다." },
+    { ch: "mask", q: "p-웰 마스크는 어떻게 만드는가?", o: ["설계자가 따로 그린다", "NW 레이어를 반전(NOT)한다", "OD를 키운다", "PP를 그대로 쓴다"], a: 1, e: "MDP의 레이어 연산이다." },
+    { ch: "mask", q: "VSB 전자빔 묘화 시간을 가장 크게 늘리는 것은?", o: ["마스크 크기", "OPC로 늘어난 분할 샷 수", "레이어 번호", "펠리클"], a: 1, e: "샷 하나씩 찍으므로 시간이 샷 수에 비례한다." },
+    { ch: "mask", q: "소량 생산 칩이 MPW 셔틀을 쓰는 이유는?", o: ["성능이 좋아서", "마스크 세트 비용을 여러 고객이 나눠 내려고", "수율이 높아서", "테스트가 필요 없어서"], a: 1, e: "생산량이 적으면 칩당 마스크 비용이 압도적이다." },
+    { ch: "lab", q: "레이아웃 편집 중 폴리를 활성 영역 끝까지만 그렸다(엔드캡 0). LVS는 무엇을 보고하겠는가?", o: ["일치", "소스와 드레인이 이어져 단락", "PMOS가 사라짐", "콘택 부족"], a: 1, e: "폴리가 확산을 완전히 가르지 못하면 소스와 드레인 확산이 하나가 된다." },
+    { ch: "lab", q: "LVS가 레이아웃 넷과 회로도 넷을 짝짓는 닻은?", o: ["레이어 번호", "금속 위 핀 라벨", "셀 이름", "GDS 데이터형"], a: 1, e: "이름 붙은 넷을 기준으로 나머지 내부 넷을 맞춰 나간다." },
+  ];
+
+  /* =============================================================== 용어집 렌더 */
+  var CH = {}; PB.CHAPTERS.forEach(function (c) { CH[c.slug] = c; });
+  var ORDER = {}; PB.CHAPTERS.forEach(function (c, i) { ORDER[c.slug] = i; });
+  var CHO = ["ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"];
+  var MERGE = { "ㄲ": "ㄱ", "ㄸ": "ㄷ", "ㅃ": "ㅂ", "ㅆ": "ㅅ", "ㅉ": "ㅈ" };
+  function initial(s) {
+    var c = s.charCodeAt(0);
+    if (c >= 0xac00 && c <= 0xd7a3) { var j = CHO[Math.floor((c - 0xac00) / 588)]; return MERGE[j] || j; }
+    if (/[0-9]/.test(s[0])) return "0–9";
+    return "A–Z";
+  }
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function norm(s) { return String(s).toLowerCase().replace(/[\s\-·_/()]/g, ""); }
+  function hl(text, q) {
+    var t = esc(text);
+    if (!q) return t;
+    var i = text.toLowerCase().indexOf(q);
+    if (i < 0) return t;
+    return esc(text.slice(0, i)) + "<mark>" + esc(text.slice(i, i + q.length)) + "</mark>" + esc(text.slice(i + q.length));
+  }
+  function gOrd(g) { var i = CHO.indexOf(g); return i >= 0 ? i : g === "A–Z" ? 100 : 101; }
+  TERMS.forEach(function (t) { t._key = norm(t.ko + " " + t.en + " " + t.abbr); t._def = norm(t.def); t._ini = initial(t.ko); });
+
+  var qEl = document.getElementById("gl-q"), listEl = document.getElementById("gl-list"), countEl = document.getElementById("gl-count");
+  var chSel = PB.seg("gl-ch", renderGlossary), sortSel = PB.seg("gl-sort", renderGlossary);
+  qEl.addEventListener("input", renderGlossary);
+
+  function renderGlossary() {
+    var raw = qEl.value.trim(), q = norm(raw), qLow = raw.toLowerCase(), ch = chSel(), mode = sortSel();
+    var items = TERMS.filter(function (t) {
+      if (ch !== "all" && t.ch !== ch) return false;
+      if (!q) return true;
+      return t._key.indexOf(q) >= 0 || t._def.indexOf(q) >= 0;
+    });
+    // 제목 일치를 정의 일치보다 앞에
+    var rank = function (t) { return q && t._key.indexOf(q) < 0 ? 1 : 0; };
+    items.sort(function (a, b) {
+      if (mode === "ch") { var d = ORDER[a.ch] - ORDER[b.ch]; if (d) return d; }
+      var r = rank(a) - rank(b); if (r && mode !== "ch") return r;
+      if (mode !== "ch") { var g = gOrd(a._ini) - gOrd(b._ini); if (g) return g; }
+      return a.ko.localeCompare(b.ko, "ko");
+    });
+    countEl.textContent = items.length + " / " + TERMS.length + "개 용어";
+    if (!items.length) { listEl.innerHTML = '<div class="gl-empty">“' + esc(raw) + '”에 해당하는 용어가 없습니다. 영어나 약어로도 검색해 보세요.</div>'; return; }
+    var html = [], last = null;
+    items.forEach(function (t) {
+      var g = mode === "ch" ? t.ch : (q && rank(t) ? "본문 일치" : t._ini);
+      if (g !== last) {
+        last = g;
+        html.push('<div class="gl-group">' + (mode === "ch" ? "Ch." + CH[g].num + " · " + esc(CH[g].title) : esc(g)) + "</div>");
+      }
+      var c = CH[t.ch];
+      html.push('<div class="gl-item" id="term-' + TERMS.indexOf(t) + '"><h4>' + hl(t.ko, qLow) + '<span class="en">' + hl(t.en, qLow) + "</span>" +
+        (t.abbr ? '<span class="abbr">' + hl(t.abbr, qLow) + "</span>" : "") + "</h4><p>" + esc(t.def) + "</p>" +
+        '<a class="ch" href="' + t.ch + '.html">→ Ch.' + c.num + " " + esc(c.title) + "</a></div>");
+    });
+    listEl.innerHTML = html.join("");
+  }
+  renderGlossary();
+
+  /* =============================================================== 퀴즈 로직 */
+  var fq = {
+    order: [], i: 0, score: 0, answered: false, results: [], cv: null,
+    el: function (id) { return document.getElementById(id); },
+  };
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  var QN = 20;
+  function startQuiz(shuf) {
+    var idx = QUIZ.map(function (_, i) { return i; });
+    shuffle(idx); idx = idx.slice(0, QN);
+    fq.order = idx.map(function (qi) {
+      var perm = QUIZ[qi].o.map(function (_, k) { return k; });
+      shuffle(perm);
+      return { qi: qi, perm: perm };
+    });
+    fq.i = 0; fq.score = 0; fq.results = [];
+    fq.el("fq-card").hidden = false; fq.el("fq-result").hidden = true;
+    showQ();
+  }
+  function showQ() {
+    var item = fq.order[fq.i], Q = QUIZ[item.qi], c = CH[Q.ch];
+    fq.answered = false;
+    fq.el("fq-count").textContent = "문제 " + (fq.i + 1) + " / " + QN;
+    fq.el("fq-score").textContent = "정답 " + fq.score;
+    fq.el("fq-fill").style.width = (fq.i / QN) * 100 + "%";
+    fq.el("fq-ch").textContent = "Ch." + c.num + " · " + c.title;
+    fq.el("fq-q").textContent = Q.q;
+    var box = fq.el("fq-opts");
+    box.innerHTML = "";
+    item.perm.forEach(function (k, n) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "fq-opt"; b.dataset.k = k;
+      b.innerHTML = '<span class="n">' + String.fromCharCode(65 + n) + "</span><span>" + esc(Q.o[k]) + "</span>";
+      b.addEventListener("click", function () { answer(k); });
+      box.appendChild(b);
+    });
+    fq.el("fq-exp").hidden = true;
+    fq.el("fq-next").hidden = true;
+  }
+  function answer(k) {
+    if (fq.answered) return;
+    fq.answered = true;
+    var item = fq.order[fq.i], Q = QUIZ[item.qi], ok = k === Q.a, c = CH[Q.ch];
+    if (ok) fq.score++;
+    fq.results.push({ ch: Q.ch, ok: ok });
+    [].forEach.call(fq.el("fq-opts").querySelectorAll(".fq-opt"), function (b) {
+      var bk = Number(b.dataset.k);
+      b.disabled = true;
+      if (bk === Q.a) b.classList.add("right");
+      else if (bk === k) b.classList.add("wrong");
+    });
+    var exp = fq.el("fq-exp");
+    exp.innerHTML = (ok ? '<b class="ok">정답!</b> ' : '<b class="bad">오답.</b> ') + esc(Q.e) +
+      ' <a href="' + Q.ch + '.html">→ Ch.' + c.num + " " + esc(c.title) + " 복습</a>";
+    exp.hidden = false;
+    fq.el("fq-score").textContent = "정답 " + fq.score;
+    fq.el("fq-fill").style.width = ((fq.i + 1) / QN) * 100 + "%";
+    var nx = fq.el("fq-next");
+    nx.textContent = fq.i + 1 < QN ? "다음 문제 →" : "결과 보기 →";
+    nx.hidden = false;
+    nx.focus({ preventScroll: true });
+  }
+  fq.el("fq-next").addEventListener("click", function () {
+    if (!fq.answered) return;
+    if (fq.i + 1 < QN) { fq.i++; showQ(); } else showResult();
+  });
+  fq.el("fq-retry").addEventListener("click", function () {
+    startQuiz(true);
+    fq.el("final-quiz").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  var RANKS = [
+    [0, "설계 입문자", "첫 인버터를 그렸다. 1장의 흐름도와 4장의 레이아웃부터 다시 따라가 보자."],
+    [8, "주니어 설계자", "흐름의 큰 그림은 잡혔다. 틀린 장의 시뮬레이터를 다시 만져 보면 금방 올라간다."],
+    [14, "물리 설계 엔지니어", "타이밍·전력·검증 보고서를 읽고 무엇을 고칠지 판단할 수 있는 수준이다."],
+    [18, "테이프아웃 리드!", "RTL에서 마스크까지 꿰뚫고 있다. 13장 실험실에서 NAND2를 처음부터 그려 LVS를 통과시켜 보자."],
+  ];
+  function perChapter() {
+    var m = {};
+    fq.results.forEach(function (r) { (m[r.ch] = m[r.ch] || { n: 0, ok: 0 }); m[r.ch].n++; if (r.ok) m[r.ch].ok++; });
+    return PB.CHAPTERS.filter(function (c) { return m[c.slug]; }).map(function (c) { return { c: c, n: m[c.slug].n, ok: m[c.slug].ok }; });
+  }
+  var SHORT = { overview: "개요", rtl: "RTL·검증", synthesis: "합성", stdcell: "표준 셀", place: "배치", cts: "CTS", route: "배선", timing: "타이밍", power: "전력", signoff: "DRC·LVS", opc: "OPC", mask: "마스크", lab: "실험실" };
+  function drawResult(ctx, w, h) {
+    var P = PB.palette(), rows = perChapter();
+    var left = Math.min(150, Math.max(92, w * 0.32)), right = 46, top = 12, rh = (h - top - 8) / Math.max(1, rows.length);
+    ctx.font = "12px " + PB.color("font");
+    ctx.textBaseline = "middle";
+    rows.forEach(function (r, i) {
+      var y = top + i * rh + rh / 2, frac = r.ok / r.n, bw = w - left - right;
+      var label = r.c.num + " " + (SHORT[r.c.slug] || r.c.title);
+      ctx.fillStyle = P.dim; ctx.textAlign = "right";
+      var maxLab = left - 10;
+      while (ctx.measureText(label).width > maxLab && label.length > 4) label = label.slice(0, -2) + "…";
+      ctx.fillText(label, left - 8, y);
+      ctx.fillStyle = P.surface; ctx.fillRect(left, y - rh * 0.3, bw, rh * 0.6);
+      ctx.fillStyle = frac >= 0.99 ? P.ok : frac >= 0.5 ? P.warn : P.bad;
+      ctx.fillRect(left, y - rh * 0.3, Math.max(2, bw * frac), rh * 0.6);
+      ctx.fillStyle = P.text; ctx.textAlign = "left"; ctx.font = "12px " + PB.color("mono");
+      ctx.fillText(r.ok + "/" + r.n, left + bw + 6, y);
+      ctx.font = "12px " + PB.color("font");
+    });
+  }
+  function showResult() {
+    fq.el("fq-card").hidden = true;
+    fq.el("fq-result").hidden = false;
+    fq.el("fq-fill").style.width = "100%";
+    fq.el("fq-count").textContent = "완료";
+    var s = fq.score, rank = RANKS[0];
+    RANKS.forEach(function (r) { if (s >= r[0]) rank = r; });
+    fq.el("fq-title").textContent = rank[1];
+    fq.el("fq-big").innerHTML = s + "<small> / " + QN + "</small>";
+    fq.el("fq-msg").textContent = "정답률 " + Math.round((s / QN) * 100) + " % · " + rank[2];
+    var weak = perChapter().filter(function (r) { return r.ok < r.n; });
+    fq.el("fq-review").innerHTML = weak.length
+      ? "다시 볼 챕터: " + weak.map(function (r) { return '<a href="' + r.c.slug + '.html">Ch.' + r.c.num + " " + esc(r.c.title) + "</a>"; }).join(" · ")
+      : "모든 챕터 만점! 13장 레이아웃 실험실에서 자신만의 셀을 그려 보자.";
+    var rowsN = perChapter().length;
+    if (!fq.cv) fq.cv = PB.canvas("#cv-fq", drawResult, { height: rowsN * 28 + 20 });
+    else fq.cv.resize();
+    fq.el("fq-result").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+  startQuiz(false);
+})();
+</script>
+</body>
+</html>
