@@ -4,7 +4,7 @@
      Text, illustrations, questions and explanations: CC-BY-4.0 (see ../LICENSE.md). -->
 <html lang="ko">
 <head>
-<!--head:start {"desc": "인버터·NAND2·NOR2 표준 셀 하나의 레이아웃을 레이어별로 뜯어 보고, 각 사각형이 ProcessBook의 어떤 마스크·공정 단계가 되는지 절단선 단면으로 확인한다. 셀 높이·트랙·CPP와 면적, 레이아웃에서 회로 추출까지.", "libs": ["cell"]}-->
+<!--head:start {"desc": "인버터·NAND2·NOR2 표준 셀 하나의 레이아웃을 레이어별로 뜯어 보고, 각 사각형이 ProcessBook의 어떤 마스크·공정 단계가 되는지 절단선 단면으로 확인한다. 셀 높이·트랙·CPP와 면적, 레이아웃에서 회로 추출까지.", "libs": ["cell", "three"]}-->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>표준 셀과 레이아웃 · DesignBook</title>
@@ -29,6 +29,8 @@
 <link rel="stylesheet" href="../css/style.css">
 <script src="../js/common.js"></script>
 <script src="../js/cell.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
 <!--head:end-->
 <style>
   .lv-wrap { display: grid; grid-template-columns: minmax(0, 1fr); }
@@ -217,9 +219,32 @@
           <div class="stage-dots" id="xs-dots"></div>
         </div>
         <div class="info-box" id="xs-info" style="grid-column:1/-1"></div>
+        <div class="ctrl-row" style="grid-column:1/-1"><a class="btn primary sm" id="xs-pb" href="#" target="_blank" rel="noopener">이 절단선을 ProcessBook 공정 엔진으로 다시 쌓기 ↗</a><span style="font-size:12.5px;color:var(--text-dim)">레이아웃 구간으로 마스크 1~10을 만든 49단계 레시피가 ProcessBook 15장 실험실에서 열린다(계산 30초 안팎).</span></div>
       </div>
       <div class="mat-legend" id="xs-leg"></div>
       <div class="sim-note">해볼 것: ① <b>NMOS 콘택 줄</b>로 자르면 교과서의 트랜지스터 단면이 나온다. 왼쪽부터 STI–소스(n⁺)–스페이서–게이트–스페이서–드레인(n⁺)–STI, 그 위로 텅스텐 콘택과 구리 M1. ② 단계 1(STI)에서 산화막이 생기는 곳은 레이아웃에서 OD가 <b>없는</b> 곳이다. 반전 관계를 확인하자. ③ 단계 4·6에서 생기는 스페이서(질화막)와 실리사이드에 대응하는 레이아웃 레이어는 없다. 게이트 모양을 따라 저절로 생긴다(자기 정렬). ④ <b>게이트 A 따라</b> 세로로 자르면 폴리 한 줄이 NMOS 채널 → STI → PMOS 채널을 차례로 지나고, <b>입력 콘택 따라</b> 자르면 가운데 STI 위의 폴리 패드에 콘택이 내려앉는 모습이 보인다(활성 영역 위 게이트에는 콘택을 둘 수 없다). 단면 위에 마우스를 올리면 그 영역을 만든 마스크와 ProcessBook 장이 나온다. (가로 단면은 세로·가로 축척이 같고, 세로 단면은 높이를 2배 과장했다. 게이트 절연막·라이너 두께는 보이도록 과장했다.)</div>
+    </div>
+  </section>
+
+  <section id="three">
+    <h2>3D로 쌓아 보기</h2>
+    <p>단면은 선 하나를 따라 자른 모습이다. 이번에는 셀 전체를 입체로 쌓아 보자. 레이아웃의 사각형이 공정 단계마다 실리콘 섬, 산화막 트렌치, 폴리 게이트, 텅스텐 기둥, 구리 배선으로 솟아오른다. 끌어서 돌리고, 바퀴로 확대하고, 구조 위에 마우스를 올려 그 부분을 만든 마스크를 확인하자. 절연막(STI 위의 PMD·저유전막)은 투명하게 그렸다.</p>
+    <div class="sim" id="sim-3d">
+      <div class="sim-head"><span class="sim-tag three">3D</span><h3>표준 셀 3D 뷰어</h3>
+        <div class="seg" id="t3-cell"><button data-value="INV_X1" class="on">INV_X1</button><button data-value="NAND2_X1">NAND2_X1</button><button data-value="NOR2_X1">NOR2_X1</button></div>
+      </div>
+      <div class="sim-body side">
+        <div class="sim-view three" id="t3-view"><span class="hint">끌어서 회전 · 바퀴로 확대</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>공정 단계 <output id="t3-st-out"></output></span><input type="range" id="t3-st" min="0" max="8" step="1" value="8"></label>
+          <div class="ctrl-row"><button class="btn sm" id="t3-play">처음부터 쌓기 ▶</button></div>
+          <label class="check"><input type="checkbox" id="t3-ild" checked> 절연막(PMD·저유전막) 보이기</label>
+          <label class="check"><input type="checkbox" id="t3-ex"> 세로 2배 과장</label>
+          <label class="check"><input type="checkbox" id="t3-row"> 셀 3개를 이어 붙인 행으로</label>
+          <div class="info-box" id="t3-info">구조 위에 마우스를 올리면 정보가 나온다.</div>
+        </div>
+      </div>
+      <div class="sim-note">해볼 것: ① 단계를 0부터 하나씩 올리자. 1에서 OD를 뺀 곳이 파여 산화막(STI)으로 채워지고, 3에서 폴리가 활성 영역과 STI 위를 함께 지나며, 7에서 콘택 기둥이, 8에서 구리 M1이 올라온다. ② 절연막을 끄면 콘택이 소스·드레인과 폴리 패드 위에 내려앉은 모습이 보인다. 활성 영역 위 게이트에는 콘택이 없다. ③ <b>셀 3개 행</b>을 켜면 이웃 셀의 VDD·VSS 레일과 N-웰이 하나로 이어진다(그림 04-1). (높이 방향은 nm 그대로이며, 게이트 절연막·라이너는 생략했다.)</div>
     </div>
   </section>
 
@@ -471,7 +496,8 @@
         ' · <a href="' + C.PBOOK + s.pb + '.html" target="_blank" rel="noopener">ProcessBook에서 보기 ↗</a>';
       dotB.forEach(function (b, i) { b.classList.toggle("on", i === stage); b.classList.toggle("done", i < stage); });
     }
-    function redraw() { xs = C.xsection(cell.rects, cut, { upto: stage, span: cut.dir === "h" ? [-60, cell.w + 60] : [-80, cell.h + 80] }); stageInfo(); lcv.redraw(); xcv.redraw(); }
+    var pbBtn = document.getElementById("xs-pb");
+    function redraw() { xs = C.xsection(cell.rects, cut, { upto: stage, span: cut.dir === "h" ? [-60, cell.w + 60] : [-80, cell.h + 80] }); stageInfo(); lcv.redraw(); xcv.redraw(); pbBtn.href = C.toProcessBook(cell.rects, cut, { period: cut.dir === "h" ? cell.w : C.H }).url; }
     lcv = PB.canvas("#xs-lcv", function (ctx, w, h) {
       var s = C.STAGES[stage], active = s.layers;
       var anyL = cell.rects.some(function (r) { return active.indexOf(r.l) >= 0; });
@@ -638,6 +664,86 @@
       PB.stat("den-o-d", small(r.d < 10 ? r.d.toFixed(1) : Math.round(r.d), "MTr/mm²"));
       PB.stat("den-o-x", small("×" + (r.d / ref.d).toFixed(1), ""));
     }, { aspect: 0.8, minHeight: 380, maxHeight: 540 });
+  })();
+  /* ---------------- 5. 3D 뷰어 */
+  (function () {
+    var view = document.getElementById("t3-view");
+    var T = PB.three(view, { camera: [5.5, -9, 9], target: [2, 6.3, 0.6], fov: 38 });
+    if (!T) return;
+    var THREE = T.THREE, U = C.util, group = new THREE.Group(), name = "INV_X1", stage = 8, meshes = [];
+    T.camera.up.set(0, 0, 1); T.controls && T.controls.update();
+    T.scene.add(group);
+    var info = document.getElementById("t3-info"), ild = document.getElementById("t3-ild"), ex = document.getElementById("t3-ex"), row = document.getElementById("t3-row");
+    var gSt = PB.range("t3-st", function (v) { return v + " · " + C.STAGES[v].name; }, function (v) { stage = v; build(); });
+    PB.seg("t3-cell", function (v) { name = v; build(); });
+    [ild, ex, row].forEach(function (c) { c.addEventListener("change", build); });
+    var MAT = {}, S = 0.01;   // 1 nm = 0.01 단위
+    function mat(key, op) { var k = key + (op || ""); if (!MAT[k]) MAT[k] = new THREE.MeshStandardMaterial({ color: new THREE.Color(C.MAT[key].color).convertSRGBToLinear(), roughness: 0.6, metalness: key === "cu" || key === "w" ? 0.35 : 0.05, transparent: !!op, opacity: op || 1, depthWrite: !op }); return MAT[k]; }
+    function box(r, z0, z1, key, meta, op) {
+      var zx = ex.checked ? 2 : 1, w = r.x1 - r.x0, h = r.y1 - r.y0, d = (z1 - z0) * zx;
+      if (w <= 0 || h <= 0 || d <= 0) return;
+      var m = new THREE.Mesh(new THREE.BoxGeometry(w * S, h * S, d * S), mat(key, op));
+      m.position.set((r.x0 + w / 2) * S, (r.y0 + h / 2) * S, (z0 * zx + d / 2) * S);
+      m.userData = meta || {}; group.add(m); if (!op) meshes.push(m);
+      if (!op) { var e = new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry), new THREE.LineBasicMaterial({ color: 0x1f2a3a, transparent: true, opacity: 0.25 })); e.position.copy(m.position); group.add(e); }
+    }
+    function rectsOf() {
+      if (!row.checked) return { rects: C.CELLS[name].rects, w: C.CELLS[name].w };
+      var r = C.place([name, "NAND2_X1", "INV_X1"]); return { rects: r.rects, w: r.w };
+    }
+    function build() {
+      while (group.children.length) { var o = group.children.pop(); o.geometry && o.geometry.dispose(); }
+      meshes = [];
+      var R = rectsOf(), rs = R.rects, by = function (l) { return rs.filter(function (r) { return r.l === l; }); };
+      var B = { x0: -60, y0: -100, x1: R.w + 60, y1: C.H + 100 }, st = function (k) { return C.STAGES.findIndex(function (q) { return q.key === k; }) <= stage; };
+      var OD = by("od"), PO = by("po"), NW = by("nw"), NP = by("np"), PP = by("pp"), CO = by("co"), M1 = by("m1");
+      var L = function (k) { return { layer: k }; };
+      // 기판
+      box(B, -300, -200, "si", { txt: "p형 실리콘 기판" });
+      if (!st("sti")) { box(B, -200, 0, "si", { txt: "p형 실리콘 기판 (아직 무늬 없음)" }); }
+      else {
+        U.subtract(B, OD).forEach(function (r) { box(r, -200, 5, "ox", { txt: "<b>STI 산화막</b> — OD가 없는 곳. 마스크 1(OD의 반전)" }); });
+        OD.forEach(function (o) {
+          var parts = st("well") ? [[U.subtract(o, NW), "pwell"], [NW.map(function (n) { return U.inter(o, n); }).filter(function (r) { return r.x1 > r.x0 && r.y1 > r.y0; }), "nwell"]] : [[[o], "si"]];
+          parts.forEach(function (pp) { pp[0].forEach(function (r) { box(r, -200, 0, pp[1] === "si" ? "si" : "si", { txt: pp[1] === "nwell" ? "<b>n-웰</b> 위 활성 영역 (PMOS 자리) — 마스크 1 + 3" : pp[1] === "pwell" ? "<b>p-웰</b> 위 활성 영역 (NMOS 자리) — 마스크 1 + 2" : "<b>활성 영역</b> (실리콘 섬) — 마스크 1", layer: "od" }); }); });
+        });
+        if (st("well")) NW.forEach(function (n) { var r = { x0: Math.max(B.x0, n.x0), y0: Math.max(B.y0, n.y0), x1: Math.min(B.x1, n.x1), y1: Math.min(B.y1, n.y1) }; box(r, -250, -200, "nwell", { txt: "<b>n-웰</b> — 마스크 3 (NW)", layer: "nw" }); });
+      }
+      // 소스·드레인
+      var gp = PO.map(function (r) { return U.grow(r, st("ldd") ? 22 : 0); });
+      if (st("ldd")) OD.forEach(function (o) {
+        U.subtract(o, gp).forEach(function (r) {
+          var n = NP.some(function (q) { return U.ov(q, r); }), t = st("sd") ? 0.6 : 0.3;
+          box(r, -0.5, 1, n ? "nplus" : "pplus", { txt: "<b>" + (n ? "n⁺" : "p⁺") + " 소스·드레인</b> — 마스크 " + (n ? "5·7 (NP)" : "6·8 (PP)") + ", 게이트·스페이서에 자기 정렬", layer: n ? "np" : "pp" });
+          if (st("sil")) box(r, 1, 9, "sil", { txt: "<b>실리사이드</b> — 마스크 없음 (자기 정렬)" });
+        });
+      });
+      if (st("gate")) PO.forEach(function (r) { box(r, 5, 85, "poly", { txt: "<b>폴리 게이트</b> — 마스크 4 (PO). 활성 영역과 겹친 곳이 채널", layer: "po" }); if (st("sil")) box(r, 85, 93, "sil", { txt: "<b>실리사이드</b> (게이트 위) — 마스크 없음" }); });
+      if (st("ldd")) PO.forEach(function (r) { U.subtract(U.grow(r, 22), PO).forEach(function (q) { box(q, 0, 85, "nit", { txt: "<b>질화막 스페이서</b> — 마스크 없음. 컨포멀 증착 + 에치백" }); }); });
+      if (st("co")) {
+        CO.forEach(function (r) { var onP = PO.some(function (q) { return U.ov(q, r) && !OD.some(function (o) { return U.ov(o, r); }); }); box(r, onP ? 93 : 9, 190, "w", { txt: "<b>텅스텐 콘택</b> — 마스크 9 (CO)" + (onP ? ", 폴리 패드 위" : ", 소스·드레인 위"), layer: "co" }); });
+        if (ild.checked) box(B, 0, 190, "ox", {}, 0.18);
+      }
+      if (st("m1")) {
+        M1.forEach(function (r) { var q = { x0: Math.max(B.x0, r.x0), y0: r.y0, x1: Math.min(B.x1, r.x1), y1: r.y1 }; box(q, 200, 290, "cu", { txt: "<b>구리 M1</b> — 마스크 10 (다마신)" + (r.net ? " · 넷 " + r.net : ""), layer: "m1" }); });
+        if (ild.checked) box(B, 190, 290, "lowk", {}, 0.16);
+      }
+      T.controls && T.controls.target.set(R.w / 2 * S, C.H / 2 * S, 0.5);
+    }
+    build();
+    (function () { var cx = C.CELLS[name].w / 2 * S, cy = C.H / 2 * S; T.camera.position.set(cx - 11, cy - 16, 15); T.controls && (T.controls.target.set(cx, cy, 0.5), T.controls.update()); })();
+    // 호버
+    var ray = new THREE.Raycaster(), mv = new THREE.Vector2(), hov = null, keep = null;
+    view.addEventListener("pointermove", function (e) {
+      var b = view.getBoundingClientRect(); mv.x = ((e.clientX - b.left) / b.width) * 2 - 1; mv.y = -((e.clientY - b.top) / b.height) * 2 + 1;
+      ray.setFromCamera(mv, T.camera); var hit = ray.intersectObjects(meshes)[0], m = hit ? hit.object : null;
+      if (m === hov) return;
+      if (hov) hov.material = keep; hov = m;
+      if (m) { keep = m.material; m.material = keep.clone(); m.material.emissive = new THREE.Color(0x6d3fd1); m.material.emissiveIntensity = 0.45; info.innerHTML = m.userData.txt || ""; if (m.userData.layer) { var Lr = C.LAYER[m.userData.layer]; info.innerHTML += '<br><span style="font-size:12px">' + Lr.steps.join(" → ") + "</span>"; } }
+    });
+    // 쌓기 재생
+    var playT = null;
+    document.getElementById("t3-play").addEventListener("click", function () { clearInterval(playT); var k = 0; gSt.set(0); playT = setInterval(function () { k++; if (k > 8) { clearInterval(playT); return; } gSt.set(k); }, 1100); });
   })();
 })();
 </script>

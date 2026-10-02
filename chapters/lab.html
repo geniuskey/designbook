@@ -85,6 +85,7 @@
           </div>
           <div class="ctrl"><span>LVS 목표 회로</span><div class="seg" id="lb-tgt"><button data-value="INV_X1" class="on">INV</button><button data-value="NAND2_X1">NAND2</button><button data-value="NOR2_X1">NOR2</button></div></div>
           <div class="btn-row"><button class="btn sm" id="lb-undo">되돌리기</button><button class="btn sm" id="lb-del">선택 지우기</button><button class="btn sm" id="lb-share">링크 복사</button></div>
+          <a class="btn primary sm" id="lb-pb" href="#" target="_blank" rel="noopener" style="text-align:center">절단선을 ProcessBook 공정 엔진으로 ↗</a>
           <label class="check"><input type="checkbox" id="lb-grid" checked> 격자 (10 nm 맞춤)</label>
           <div class="box" id="lb-sel">그리기: 캔버스 위에서 끌어 사각형. 선택·이동: 눌러서 고르고 끌어서 이동, <span class="kbd">Delete</span> 지우기, 방향키 5 nm 이동. 절단선: 눌러서 가로 절단선, <span class="kbd">Shift</span>+누르기 세로.</div>
         </div>
@@ -220,6 +221,7 @@
     var bb = C.bbox(state.rects.filter(function (r) { return r.l === "od" || r.l === "po" || r.l === "m1"; }));
     PB.stat("lb-o-a", state.rects.length + " <small>· " + ((Math.max(state.w, bb.x1) * H0) / 1e6).toFixed(3) + " µm²</small>");
     lcv.redraw(); xcv.redraw();
+    try { document.getElementById("lb-pb").href = C.toProcessBook(withIds(), state.cut, { period: state.cut.dir === "h" ? state.w : H0 }).url; } catch (e) {}
   }
   /* ---------- 캔버스 */
   var tr = null, drag = null;
