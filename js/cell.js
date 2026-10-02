@@ -449,7 +449,7 @@
     const nE = cnt(ext.devices, "n"), pE = cnt(ext.devices, "p");
     const nS = sch.filter((d) => d.t === "n").length, pS = sch.filter((d) => d.t === "p").length;
     if (!match) {
-      if (Object.keys(se).length !== Object.keys(ss).length || nE !== nS || pE !== pS) msgs.push(`소자 수 불일치: 레이아웃 NMOS ${nE}·PMOS ${pE} / 회로도 NMOS ${nS}·PMOS ${pS} (병렬 소자는 하나로 합쳐 비교)`);
+      if (nE !== nS || pE !== pS) msgs.push(`소자 수 불일치: 레이아웃 NMOS ${nE}·PMOS ${pE} / 회로도 NMOS ${nS}·PMOS ${pS} (병렬 소자는 하나로 합쳐 비교)`);
       else msgs.push("소자 수는 같지만 연결이 다름");
     }
     return { match: match && !ext.shorts.length && !ext.opens.length && !ext.errors.length, msgs: msgs.concat(ext.errors), pins: [...pins] };

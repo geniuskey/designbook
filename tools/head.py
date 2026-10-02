@@ -57,6 +57,8 @@ def head(c, meta):
 <link rel="stylesheet" href="../css/style.css">
 <script src="../js/common.js"></script>
 '''
+    if "optics" in libs:
+        out += '<script src="../js/optics.js"></script>\n'
     if "cell" in libs:
         out += '<script src="../js/cell.js"></script>\n'
     if "three" in libs:
