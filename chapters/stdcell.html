@@ -318,6 +318,37 @@
     </div>
   </section>
 
+  <section id="charz">
+    <h2>레이아웃에서 타이밍 숫자로: 셀 특성화</h2>
+    <p>3장의 합성기와 8장의 STA가 쓰는 셀 지연 표(.lib)는 어디서 오는가? 라이브러리 팀이 레이아웃에서 트랜지스터 W·L과 기생 커패시턴스를 추출하고(위 추출 시뮬레이터), 그 회로를 SPICE로 수천 번 시뮬레이션해 표로 만든다. 이것을 <span class="term">셀 특성화</span><span class="en">(Cell characterization)</span>라 한다. 아래 시뮬레이터는 그 과정을 축소해 직접 돌린다. 트랜지스터는 속도 포화를 반영한 알파 파워 모델이고, 출력 노드 방정식 \(C_L\,dV_{out}/dt = I_p - I_n\)을 시간 단계마다 적분한다.</p>
+    <div class="formula">$$I_{D,sat} = k\,\frac{W}{L}\,(V_{GS}-V_t)^{\alpha},\qquad C_L = C_{\text{load}} + \underbrace{C_j A_D + C_{jsw} P_D}_{\text{추출한 확산}} + C_{\text{wire}}$$
+      <div class="where">EDU45 가정: \(V_t\) = 0.33 V(NMOS)·−0.35 V(PMOS), \(\alpha\) = 1.3, 포화 전류 약 0.5 mA/µm(N)·0.25 mA/µm(P) @ 1 V, 게이트 커패시턴스 1.5 fF/µm. 셀의 W와 확산 면적·둘레는 위에서 추출한 값을 그대로 쓴다.</div>
+    </div>
+    <div class="sim" id="sim-ch">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>인버터 특성화: 전달 곡선 · 과도 응답 · NLDM 표 만들기</h3>
+        <div class="seg" id="ch-x"><button data-value="1" class="on">INV_X1</button><button data-value="2">INV_X2</button><button data-value="4">INV_X4</button></div>
+      </div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ch-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span><span>V<sub>DD</sub></span> <output id="ch-v-out"></output></span><input type="range" id="ch-v" min="0.6" max="1.2" step="0.01" value="1"></label>
+          <label class="ctrl"><span>입력 슬루 (10–90%) <output id="ch-s-out"></output></span><input type="range" id="ch-s" min="2" max="200" step="1" value="20"></label>
+          <label class="ctrl"><span><span>출력 부하 C<sub>load</sub></span> <output id="ch-c-out"></output></span><input type="range" id="ch-c" min="0.2" max="20" step="0.1" value="4"></label>
+          <label class="ctrl"><span>PMOS / NMOS 폭 비 <output id="ch-r-out"></output></span><input type="range" id="ch-r" min="0.5" max="3" step="0.05" value="1.1"></label>
+          <div class="ctrl"><span>그래프</span><div class="seg" id="ch-g"><button data-value="tr" class="on">과도 응답</button><button data-value="vtc">전달 곡선</button><button data-value="tab">NLDM 표</button></div></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">t<sub>pHL</sub> · t<sub>pLH</sub></span><span class="v" id="ch-o-tp">—</span></div>
+        <div class="stat"><span class="k">출력 슬루 (상승·하강)</span><span class="v" id="ch-o-sl">—</span></div>
+        <div class="stat"><span class="k">스위칭 임계 V<sub>M</sub></span><span class="v" id="ch-o-vm">—</span></div>
+        <div class="stat"><span class="k">입력 C · 자기 부하</span><span class="v" id="ch-o-c">—</span></div>
+      </div>
+      <div style="padding:12px 18px;border-top:1px solid var(--border)"><div style="font-size:13px;color:var(--text-dim);margin-bottom:6px">생성된 Liberty 조각 (cell_fall, ns · pF)</div><pre class="net no-math" id="ch-lib"></pre></div>
+      <div class="sim-note">해볼 것: ① <b>과도 응답</b>에서 부하를 키우면 지연이 거의 선형으로 늘고, 입력 슬루를 키우면 완만하게 는다. 8장 NLDM 표의 두 축이 바로 이것이다. ② <b>NLDM 표</b>를 누르면 5 × 5 조건을 모두 시뮬레이션해 cell_fall 표를 채운다. 아래 Liberty 조각이 그 결과다. ③ P/N 비를 바꾸면 <b>전달 곡선</b>의 스위칭 임계 V<sub>M</sub>이 움직이고 상승·하강 지연의 균형이 바뀐다. 정공 이동도가 낮아 PMOS를 더 넓게 그리는 이유다. ④ X2·X4는 핑거를 늘려 W를 키운 셀이다. 구동력이 커지지만 입력 C와 자기 부하도 함께 커진다(3장 논리적 노력). (교육용 모델이며 실제 특성화는 BSIM 모델과 SPICE로 한다.)</div>
+    </div>
+  </section>
+
   <section id="density">
     <h2>셀 면적과 트랜지스터 밀도</h2>
     <p>공정 세대를 비교할 때 “7 nm”, “3 nm” 같은 이름은 더 이상 어떤 물리적 길이와도 일치하지 않는다. 대신 설계자가 실제로 쓰는 숫자, 즉 <strong>CPP × 금속 피치 × 트랙 수</strong>로 셀 면적을 계산하는 편이 정직하다. 2017년 Mark Bohr(Intel)가 제안한 트랜지스터 밀도 지표는 NAND2와 스캔 플립플롭의 면적을 6 : 4로 섞는다.</p>
@@ -744,6 +775,74 @@
     // 쌓기 재생
     var playT = null;
     document.getElementById("t3-play").addEventListener("click", function () { clearInterval(playT); var k = 0; gSt.set(0); playT = setInterval(function () { k++; if (k > 8) { clearInterval(playT); return; } gSt.set(k); }, 1100); });
+  })();
+  /* ---------------- 6. 셀 특성화 */
+  (function () {
+    var ext = C.extract(C.CELLS.INV_X1.rects, C.CELLS.INV_X1.pins);
+    var Wn0 = ext.devices.filter(function (d) { return d.t === "n"; })[0].W / 1000, Wp0 = ext.devices.filter(function (d) { return d.t === "p"; })[0].W / 1000; // µm
+    var yd = ext.diff.filter(function (d) { return d.net === "Y"; }), AD = yd.reduce(function (a, d) { return a + d.area; }, 0) / 1e6, PD = yd.reduce(function (a, d) { return a + d.perim; }, 0) / 1e3;
+    var X = 1, mode = "tr", cv, rr = function () { cv && cv.redraw(); };
+    var gV = PB.range("ch-v", function (v) { return v.toFixed(2) + " V"; }, rr);
+    var gS = PB.range("ch-s", function (v) { return v + " ps"; }, rr);
+    var gC = PB.range("ch-c", function (v) { return v.toFixed(1) + " fF"; }, rr);
+    var gR = PB.range("ch-r", function (v) { return v.toFixed(2); }, rr);
+    PB.seg("ch-x", function (v) { X = Number(v); rr(); });
+    PB.seg("ch-g", function (v) { mode = v; rr(); });
+    var VTN = 0.33, VTP = 0.35, AL = 1.3, KN = 0.5e-3, KP = 0.25e-3, CG = 1.5; // A/µm @ (1-Vt)^α 정규화, fF/µm
+    function idev(vgs, vds, W, K, vt) { // 알파 파워 + 선형 영역
+      if (vgs <= vt || vds <= 0) return 0;
+      var ov = vgs - vt, isat = K * W * Math.pow(ov / (1 - 0.33), AL), vdsat = 0.9 * Math.pow(ov, AL / 2) * 0.6;
+      return vds >= vdsat ? isat * (1 + 0.08 * (vds - vdsat)) : isat * (2 - vds / vdsat) * vds / vdsat;
+    }
+    function dev() { var r = gR() / 1.1; return { Wn: Wn0 * X, Wp: Wp0 * X * r, Cself: (AD * 1.0 + PD * 0.08) * X * (0.5 + 0.5 * r) + 0.15 * X }; }
+    function Cin(d) { return CG * (d.Wn + d.Wp); }
+    function sim(V, slew, Cl, rising) { // rising: 입력 상승(출력 하강)
+      var d = dev(), C = (Cl + d.Cself) * 1e-15, tr = slew / 0.8 * 1e-12, dt = 0.05e-12, vo = rising ? V : 0, t = 0, T = [], t50i = null, t50o = null, t10 = null, t90 = null;
+      var tmax = Math.max(40e-12 + tr * 1.5, 0);
+      for (var k = 0; k < 40000; k++) {
+        var vin = rising ? PB.clamp((t - 10e-12) / tr, 0, 1) * V : V * (1 - PB.clamp((t - 10e-12) / tr, 0, 1));
+        var In = idev(vin, vo, d.Wn, KN, VTN), Ip = idev(V - vin, V - vo, d.Wp, KP, VTP);
+        vo += (Ip - In) / C * dt; vo = PB.clamp(vo, -0.05, V + 0.05);
+        if (k % 20 === 0) T.push([t * 1e12, vin, vo]);
+        if (t50i == null && (rising ? vin >= V / 2 : vin <= V / 2)) t50i = t;
+        if (t50o == null && (rising ? vo <= V / 2 : vo >= V / 2)) t50o = t;
+        var a = rising ? vo <= 0.9 * V : vo >= 0.1 * V, bb = rising ? vo <= 0.1 * V : vo >= 0.9 * V;
+        if (t10 == null && a) t10 = t; if (t90 == null && bb) t90 = t;
+        t += dt;
+        if (t90 != null && t > t90 + 15e-12 && t > 10e-12 + tr + 5e-12) break;
+      }
+      return { T: T, tp: (t50o - t50i) * 1e12, slew: (t90 - t10) * 1e12 };
+    }
+    function vtc(V) { var d = dev(), out = []; for (var vi = 0; vi <= V + 1e-9; vi += V / 120) { var lo = 0, hi = V; for (var k = 0; k < 40; k++) { var m = (lo + hi) / 2, f = idev(V - vi, V - m, d.Wp, KP, VTP) - idev(vi, m, d.Wn, KN, VTN); if (f > 0) lo = m; else hi = m; } out.push([vi, (lo + hi) / 2]); } return out; }
+    var SL = [5, 20, 50, 100, 200], CLs = [0.5, 2, 5, 10, 20], cache = {};
+    function table(V) { var key = [V, X, gR()].join("|"); if (cache[key]) return cache[key]; var t = SL.map(function (s) { return CLs.map(function (c) { return sim(V, s, c, true).tp; }); }); return (cache[key] = t); }
+    cv = PB.canvas("#ch-cv", function (ctx, w, h) {
+      var P = PB.palette(), V = gV(), s = gS(), Cl = gC(), d = dev();
+      var f = sim(V, s, Cl, true), r = sim(V, s, Cl, false), vt = vtc(V), vm = 0;
+      for (var i = 1; i < vt.length; i++) if (vt[i][1] < vt[i][0] && vt[i - 1][1] >= vt[i - 1][0]) vm = vt[i][0];
+      if (mode === "tr") {
+        var tmax = Math.max(f.T[f.T.length - 1][0], r.T[r.T.length - 1][0]);
+        var half = (h - 20) / 2;
+        PB.chart(ctx, { x: 56, y: 12, w: w - 74, h: half - 34 }, { x: [0, tmax], y: [-0.05, V * 1.08], yLabel: "", series: [{ data: f.T.map(function (q) { return [q[0], q[1]]; }), color: P.faint, width: 1.6, dash: [4, 3] }, { data: f.T.map(function (q) { return [q[0], q[2]]; }), color: P.accent, width: 2.4 }], hlines: [{ y: V / 2, color: P.faint }] });
+        PB.chart(ctx, { x: 56, y: half + 6, w: w - 74, h: half - 40 }, { x: [0, tmax], y: [-0.05, V * 1.08], xLabel: "시간 (ps)", series: [{ data: r.T.map(function (q) { return [q[0], q[1]]; }), color: P.faint, width: 1.6, dash: [4, 3] }, { data: r.T.map(function (q) { return [q[0], q[2]]; }), color: P.accent2, width: 2.4 }], hlines: [{ y: V / 2, color: P.faint }] });
+        ctx.font = PB.font(11.5); ctx.textAlign = "right"; ctx.textBaseline = "top";
+        ctx.fillStyle = P.accent; ctx.fillText("출력 하강 (입력 상승, 점선)", w - 22, 16); ctx.fillStyle = P.accent2; ctx.fillText("출력 상승 (입력 하강)", w - 22, half + 10);
+      } else if (mode === "vtc") {
+        PB.chart(ctx, null, { x: [0, V], y: [0, V], xLabel: "V_in (V)", yLabel: "V_out (V)", series: [{ data: vt, color: P.accent, width: 2.6 }, { data: [[0, 0], [V, V]], color: P.faint, width: 1, dash: [4, 4] }], points: [{ x: vm, y: vm, color: P.accent2, label: "V_M = " + vm.toFixed(2) + " V" }] });
+      } else {
+        var tb = table(V), lx = 74, ty = 36, cw = (w - lx - 14) / 5, chh = (h - ty - 30) / 5, lo = tb[0][0], hi = tb[4][4];
+        ctx.font = PB.font(11, true); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        for (var a = 0; a < 5; a++) for (var b = 0; b < 5; b++) { var t = (tb[a][b] - lo) / (hi - lo || 1); ctx.fillStyle = (PB.isDark() ? "rgba(169,139,255," : "rgba(109,63,209,") + (0.08 + 0.72 * t) + ")"; ctx.fillRect(lx + b * cw, ty + a * chh, cw - 2, chh - 2); ctx.fillStyle = t > 0.55 ? "#fff" : P.text; ctx.fillText(tb[a][b].toFixed(1), lx + b * cw + cw / 2, ty + a * chh + chh / 2); }
+        ctx.fillStyle = P.dim; ctx.font = PB.font(11); CLs.forEach(function (c, b) { ctx.fillText(c + " fF", lx + b * cw + cw / 2, ty - 12); }); ctx.textAlign = "right"; SL.forEach(function (s2, a) { ctx.fillText(s2 + " ps", lx - 8, ty + a * chh + chh / 2); });
+        ctx.textAlign = "center"; ctx.fillText("출력 부하 →   (값: t_pHL, ps)", lx + 2.5 * cw, 10);
+      }
+      PB.stat("ch-o-tp", small(f.tp.toFixed(1) + " · " + r.tp.toFixed(1), "ps"));
+      PB.stat("ch-o-sl", small(r.slew.toFixed(1) + " · " + f.slew.toFixed(1), "ps"));
+      PB.stat("ch-o-vm", small(vm.toFixed(2), "V") + " <small>(" + Math.round(vm / V * 100) + "% V<sub>DD</sub>)</small>");
+      PB.stat("ch-o-c", small(Cin(d).toFixed(2) + " · " + d.Cself.toFixed(2), "fF"));
+      var tb2 = table(V), lib = "cell (INV_X" + X + ") {\n  pin (A) { capacitance : " + (Cin(d) / 1000).toFixed(5) + " ; }\n  pin (Y) { function : \"!A\" ;\n    timing () { related_pin : \"A\" ;\n      cell_fall (delay_template_5x5) {\n        index_1 (\"" + SL.map(function (v) { return (v / 1000).toFixed(3); }).join(", ") + "\") ;\n        index_2 (\"" + CLs.map(function (v) { return (v / 1000).toFixed(4); }).join(", ") + "\") ;\n        values ( \\\n" + tb2.map(function (row2) { return "          \"" + row2.map(function (v) { return (v / 1000).toFixed(4); }).join(", ") + "\""; }).join(", \\\n") + " ) ;\n      } } } }";
+      document.getElementById("ch-lib").textContent = lib;
+    }, { aspect: 0.66, minHeight: 320, maxHeight: 460 });
   })();
 })();
 </script>
