@@ -178,7 +178,7 @@
     <p>아래가 EDU45 라이브러리의 실제 셀 레이아웃이다(교육용으로 직접 그린 것으로, 모든 설계 규칙을 통과한다). 레이어 칩을 눌러 하나씩 끄고 켜 보고, 사각형 위에 마우스를 올리거나 눌러 보자. 그 레이어가 몇 번 마스크가 되고, 공장에서 어떤 공정 단계를 거쳐 만들어지는지, ProcessBook의 어느 장에서 그 물리를 다루는지가 나온다.</p>
     <div class="sim" id="sim-lv">
       <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>표준 셀 레이아웃 뷰어</h3>
-        <div class="seg" id="lv-cell"><button data-value="INV_X1" class="on">INV_X1</button><button data-value="NAND2_X1">NAND2_X1</button><button data-value="NOR2_X1">NOR2_X1</button></div>
+        <div class="seg" id="lv-cell"><button data-value="INV_X1" class="on">INV_X1</button><button data-value="NAND2_X1">NAND2_X1</button><button data-value="NOR2_X1">NOR2_X1</button><button data-value="INV_X2">INV_X2</button></div>
       </div>
       <div class="sim-body side">
         <div class="sim-view" style="position:relative"><canvas id="lv-cv"></canvas><div class="tip-float" id="lv-tip"></div><span class="hint">사각형 위에 올리기 · 누르기</span></div>
@@ -203,7 +203,7 @@
     <p>레이아웃은 위에서 내려다본 평면도이고, 웨이퍼는 깊이가 있는 입체다. 레이아웃에 선을 하나 긋고 그 선을 따라 웨이퍼를 잘랐다고 상상하면 그 아래에 <strong>공정 단면</strong>이 있다. 이 단면은 레이아웃의 각 레이어를 마스크로 삼아 <a href="https://processbook.euiyun.com/chapters/integration.html">ProcessBook 12장의 CMOS 공정 흐름</a>을 순서대로 실행한 결과다. 아래 시뮬레이터는 절단선에 걸린 레이어 구간들로부터 그 단면을 쌓는다. 공정 단계 슬라이더를 처음부터 한 칸씩 옮기며, 어느 단계에서 레이아웃의 어느 레이어가 쓰이는지(왼쪽에 강조) 보자.</p>
     <div class="sim" id="sim-xs">
       <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>절단선 → 공정 단면 (레이어 ↔ 마스크 ↔ 공정)</h3>
-        <div class="seg" id="xs-cell"><button data-value="INV_X1" class="on">INV_X1</button><button data-value="NAND2_X1">NAND2_X1</button><button data-value="NOR2_X1">NOR2_X1</button></div>
+        <div class="seg" id="xs-cell"><button data-value="INV_X1" class="on">INV_X1</button><button data-value="NAND2_X1">NAND2_X1</button><button data-value="NOR2_X1">NOR2_X1</button><button data-value="INV_X2">INV_X2</button></div>
       </div>
       <div class="lv-wrap two">
         <div class="sim-view"><canvas id="xs-lcv" style="touch-action:none;cursor:crosshair"></canvas><span class="hint">드래그해서 절단선 이동</span></div>
@@ -231,7 +231,7 @@
     <p>단면은 선 하나를 따라 자른 모습이다. 이번에는 셀 전체를 입체로 쌓아 보자. 레이아웃의 사각형이 공정 단계마다 실리콘 섬, 산화막 트렌치, 폴리 게이트, 텅스텐 기둥, 구리 배선으로 솟아오른다. 끌어서 돌리고, 바퀴로 확대하고, 구조 위에 마우스를 올려 그 부분을 만든 마스크를 확인하자. 절연막(STI 위의 PMD·저유전막)은 투명하게 그렸다.</p>
     <div class="sim" id="sim-3d">
       <div class="sim-head"><span class="sim-tag three">3D</span><h3>표준 셀 3D 뷰어</h3>
-        <div class="seg" id="t3-cell"><button data-value="INV_X1" class="on">INV_X1</button><button data-value="NAND2_X1">NAND2_X1</button><button data-value="NOR2_X1">NOR2_X1</button></div>
+        <div class="seg" id="t3-cell"><button data-value="INV_X1" class="on">INV_X1</button><button data-value="NAND2_X1">NAND2_X1</button><button data-value="NOR2_X1">NOR2_X1</button><button data-value="INV_X2">INV_X2</button></div>
       </div>
       <div class="sim-body side">
         <div class="sim-view three" id="t3-view"><span class="hint">끌어서 회전 · 바퀴로 확대</span></div>

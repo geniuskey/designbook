@@ -422,7 +422,7 @@ Cout = A & B | Cin & (A ^ B)</textarea>
   document.getElementById("mk-gds").addEventListener("click", function () {
     if (!R) return;
     var blob = new Blob([F.gds("DB_DESIGN", R.L)], { type: "application/octet-stream" }), a = document.createElement("a");
-    a.href = URL.createObjectURL(blob); a.download = "designbook_flow.gds"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    PB.track("e", "gds"); a.href = URL.createObjectURL(blob); a.download = "designbook_flow.gds"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
   });
 
   function redrawTab() {
