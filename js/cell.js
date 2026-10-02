@@ -92,7 +92,7 @@
   /* ------------------------------------------------------------ 설계 규칙 (EDU45) */
   const RULES = [
     { id: "OD.W.1", type: "width", layer: "od", v: 120, desc: "활성 영역 최소 폭", why: "좁은 실리콘 섬은 STI 식각·갭필에서 무너지거나 응력으로 결함이 생긴다.", pb: "etch" },
-    { id: "OD.S.1", type: "space", layer: "od", v: 140, desc: "활성 영역 최소 간격", why: "간격이 STI 트렌치 폭이다. 좁으면 갭필 보이드가 생기고 소자 사이 격리가 약해진다.", pb: "deposition" },
+    { id: "OD.S.1", type: "space", layer: "od", v: 100, desc: "활성 영역 최소 간격", why: "간격이 STI 트렌치 폭이다. 좁으면 갭필 보이드가 생기고 소자 사이 격리가 약해진다.", pb: "deposition" },
     { id: "PO.W.1", type: "width", layer: "po", v: 50, desc: "폴리 최소 폭 (= 최소 게이트 길이)", why: "게이트 노광 해상도와 단채널 효과가 정한다.", pb: "litho" },
     { id: "PO.S.1", type: "space", layer: "po", v: 80, desc: "폴리 최소 간격", why: "노광 해상도와 식각 잔류물(브리징) 때문에.", pb: "resist" },
     { id: "PO.EX.1", type: "endcap", layer: "po", other: "od", v: 60, desc: "게이트의 활성 영역 밖 연장(엔드캡)", why: "선 끝은 노광에서 짧아진다(선 끝 후퇴). 모자라면 게이트가 활성 영역을 다 덮지 못해 소스와 드레인이 이어진다.", pb: "resist" },

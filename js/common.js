@@ -24,7 +24,9 @@
     { slug: "opc",       num: "11", title: "OPC와 리소그래피 친화 설계", desc: "그린 대로 찍히지 않는다. 공중상과 근접 효과, 규칙·모델 기반 OPC, 세리프·해머헤드·SRAF.", tags: ["DFM", "sim"] },
     { slug: "mask",      num: "12", title: "테이프아웃과 마스크 제작",   desc: "GDS에서 레티클까지. 레이어→마스크 대응, 분할(fracturing)과 전자빔 묘화, 마스크 수와 비용.", tags: ["제조 인계", "sim"] },
     { slug: "lab",       num: "13", title: "레이아웃 실험실",           desc: "레이어를 골라 사각형을 그리면 DRC가 실시간으로 검사하고, 자른 선의 공정 단면이 그려지는 샌드박스.", tags: ["샌드박스", "sim"] },
-    { slug: "glossary",  num: "14", title: "용어집 & 종합 퀴즈",        desc: "핵심 설계 용어를 검색하고, 종합 퀴즈로 실력을 점검하자.", tags: ["정리"] },
+    { slug: "flow",      num: "14", title: "칩 하나 끝까지",           desc: "식 한 줄을 써서 합성·배치·배선·타이밍·DRC·LVS·마스크·GDS까지 한 화면에서 끝낸다. 진짜 GDSII 파일을 내려받는다.", tags: ["종합 실습", "sim"] },
+    { slug: "arcade",    num: "15", title: "도전 과제",               desc: "타이밍 맞추기, 배선 퍼즐, DRC 위반 찾기, 멀티 패터닝 색칠. 점수와 배지로 실력을 겨룬다.", tags: ["게임", "sim"] },
+    { slug: "glossary",  num: "16", title: "용어집 & 종합 퀴즈",        desc: "핵심 설계 용어를 검색하고, 종합 퀴즈로 실력을 점검하자.", tags: ["정리"] },
   ];
   /** 시리즈의 다른 책 */
   const SERIES = [

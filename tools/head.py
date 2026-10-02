@@ -61,6 +61,8 @@ def head(c, meta):
         out += '<script src="../js/optics.js"></script>\n'
     if "cell" in libs:
         out += '<script src="../js/cell.js"></script>\n'
+    if "flow" in libs:
+        out += '<script src="../js/flow.js"></script>\n'
     if "three" in libs:
         out += '<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>\n<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>\n'
     return out
