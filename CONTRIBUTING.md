@@ -49,4 +49,10 @@ overview(01 개요), wafer(02), oxidation(03 열산화), litho(04 노광 광학)
 - `CELL.LAYERS` — 레이어 정의(이름·GDS 번호·색·무늬·대응 마스크·ProcessBook 챕터).
 - `CELL.CELLS` — EDU45 표준 셀(INV_X1, NAND2_X1, NOR2_X1)의 사각형·핀·트랜지스터.
 - `CELL.drawLayout(ctx, rects, box, opts)`, `CELL.xsection(rects, cut)`, `CELL.drawXsec(ctx, xs, box, opts)`.
-- `CELL.RULES`, `CELL.drc(rects)`, `CELL.extract(rects, labels)`, `CELL.lvs(ext, schematic)`.
+- `CELL.RULES`, `CELL.drc(rects)`, `CELL.extract(rects, labels)`, `CELL.lvs(ext, schematic)`, `CELL.toProcessBook(rects, cut, {period})` → ProcessBook 실험실 링크.
+
+## 흐름 엔진 (`FLOW`, `js/flow.js`)
+- `FLOW.run(src)` → `{parsed, S(합성), P(배치), R(배선), L(레이아웃)}`, `FLOW.sta(S, R, {T})`, `FLOW.lvs(S, L)`, `FLOW.gds(name, L)` → Uint8Array.
+
+## 학습 진행
+- `PB.track('e', key)` 이벤트, `PB.track('g', key, n)` 게임 기록. 배지 정의는 `js/common.js`의 `BADGES`.

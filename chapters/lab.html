@@ -80,11 +80,14 @@
           <div class="ctrl"><span>불러오기</span>
             <div class="btn-row">
               <button class="btn sm" data-load="blank">빈 판 (레일만)</button><button class="btn sm" data-load="INV_X1">INV</button><button class="btn sm" data-load="NAND2_X1">NAND2</button><button class="btn sm" data-load="NOR2_X1">NOR2</button>
-              <button class="btn sm" data-load="broken1">고장 난 INV</button><button class="btn sm" data-load="broken2">고장 난 NAND2</button>
+              <button class="btn sm" data-load="INV_X2">INV_X2</button><button class="btn sm" data-load="broken1">고장 난 INV</button><button class="btn sm" data-load="broken2">고장 난 NAND2</button>
+              <button class="btn sm" data-load="taskBUF">과제: BUF 잇기</button><button class="btn sm" data-load="taskAND">과제: AND2 잇기</button>
             </div>
           </div>
-          <div class="ctrl"><span>LVS 목표 회로</span><div class="seg" id="lb-tgt"><button data-value="INV_X1" class="on">INV</button><button data-value="NAND2_X1">NAND2</button><button data-value="NOR2_X1">NOR2</button></div></div>
+          <div class="ctrl"><span>오른쪽에 셀 붙이기</span><div class="btn-row"><button class="btn sm" data-add="INV_X1">+ INV</button><button class="btn sm" data-add="INV_X2">+ INV_X2</button><button class="btn sm" data-add="NAND2_X1">+ NAND2</button><button class="btn sm" data-add="NOR2_X1">+ NOR2</button></div></div>
+          <div class="ctrl"><span>LVS 목표 회로</span><div class="seg" id="lb-tgt"><button data-value="INV_X1" class="on">INV</button><button data-value="NAND2_X1">NAND2</button><button data-value="NOR2_X1">NOR2</button><button data-value="INV_X2">INV_X2</button><button data-value="BUF">BUF</button><button data-value="AND2">AND2</button></div></div>
           <div class="btn-row"><button class="btn sm" id="lb-undo">되돌리기</button><button class="btn sm" id="lb-del">선택 지우기</button><button class="btn sm" id="lb-share">링크 복사</button></div>
+          <a class="btn primary sm" id="lb-pb" href="#" target="_blank" rel="noopener" style="text-align:center">절단선을 ProcessBook 공정 엔진으로 ↗</a>
           <label class="check"><input type="checkbox" id="lb-grid" checked> 격자 (10 nm 맞춤)</label>
           <div class="box" id="lb-sel">그리기: 캔버스 위에서 끌어 사각형. 선택·이동: 눌러서 고르고 끌어서 이동, <span class="kbd">Delete</span> 지우기, 방향키 5 nm 이동. 절단선: 눌러서 가로 절단선, <span class="kbd">Shift</span>+누르기 세로.</div>
         </div>
@@ -114,7 +117,7 @@
       <li><strong>라벨</strong>: 라벨 도구로 입력 M1에 A, 출력 M1에 Y를 찍는다(VDD·VSS 레일 라벨은 이미 있다). LVS가 “일치”가 되면 완성이다.</li>
     </ol>
     <div class="callout tip"><strong>도전 과제</strong>
-      <p>① 고장 난 INV와 NAND2에는 각각 몇 개의 결함이 숨어 있다. DRC와 LVS를 모두 통과시켜 보자. ② INV의 폭을 2 CPP(380 nm) 그대로 두고 NMOS와 PMOS를 두 핑거(게이트 두 줄)로 바꾸면 무엇이 달라지는가? (힌트: LVS는 병렬 소자를 합쳐 비교한다.) ③ 절단선을 PMOS 콘택 줄에 놓고, 공정 단계마다 무엇이 생기는지 4장의 단면과 비교해 보자.</p>
+      <p>① 고장 난 INV와 NAND2에는 각각 몇 개의 결함이 숨어 있다. DRC와 LVS를 모두 통과시켜 보자. ② INV의 폭을 2 CPP(380 nm) 그대로 두고 NMOS와 PMOS를 두 핑거(게이트 두 줄)로 바꾸면 무엇이 달라지는가? (힌트: LVS는 병렬 소자를 합쳐 비교한다.) ③ <b>과제: BUF 잇기</b>를 불러와 첫 인버터의 출력 Y를 둘째 인버터의 입력에 M1(또는 M2와 V1 비아)으로 이어 LVS를 통과시켜 보자. AND2 과제는 NAND2 뒤에 인버터를 잇는다. ④ 절단선을 PMOS 콘택 줄에 놓고, 공정 단계마다 무엇이 생기는지 4장의 단면과 비교해 보자.</p>
     </div>
   </section>
 </main>
@@ -126,14 +129,15 @@
   var state = { rects: [], labels: [], cut: { dir: "h", y: 225 }, w: W0 }, hist = [], layer = "od", tool = "draw", labName = "A", sel = null, hi = null, tgt = "INV_X1";
   var VIEW = { x0: -80, y0: -140, x1: 680, y1: 1420 };
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
-  function push() { hist.push(clone(state)); if (hist.length > 80) hist.shift(); }
+  var edits = 0;
+  function push() { edits++; hist.push(clone(state)); if (hist.length > 80) hist.shift(); }
   function blank(w) {
     return { rects: [{ l: "nw", x0: 0, y0: 630, x1: w, y1: 1340 }, { l: "np", x0: 0, y0: 0, x1: w, y1: 630 }, { l: "pp", x0: 0, y0: 630, x1: w, y1: 1260 }, { l: "m1", x0: 0, y0: -45, x1: w, y1: 45 }, { l: "m1", x0: 0, y0: 1215, x1: w, y1: 1305 }],
       labels: [{ name: "VDD", x: w / 2, y: 1260 }, { name: "VSS", x: w / 2, y: 0 }], cut: { dir: "h", y: 225 }, w: w };
   }
   function fromCell(name) { var c = C.CELLS[name]; return { rects: c.rects.map(function (r) { return { l: r.l, x0: r.x0, y0: r.y0, x1: r.x1, y1: r.y1 }; }), labels: c.pins.map(function (p) { return { name: p.name, x: p.x, y: p.y }; }), cut: { dir: "h", y: 225 }, w: c.w }; }
   function load(k) {
-    push();
+    push(); edits = 0;
     if (k === "blank") { state = blank(W0); tgtSet("INV_X1"); }
     else if (k === "broken1") {
       state = fromCell("INV_X1");
@@ -149,6 +153,13 @@
       state.rects.forEach(function (r) { if (r.l === "pp") r.y0 = 700; if (r.l === "m1" && r.x0 === 255 && r.y0 === 680 && r.x1 === 495) r.x1 = 400; });
       state.rects.push({ l: "od", x0: 420, y0: 560, x1: 470, y1: 640 });
       tgtSet("NAND2_X1");
+    } else if (k === "taskBUF" || k === "taskAND") {
+      var a = k === "taskBUF" ? "INV_X1" : "NAND2_X1", wA = C.CELLS[a].w;
+      state = fromCell(a); state.labels = state.labels.filter(function (p) { return p.name !== "Y"; });
+      C.CELLS.INV_X1.rects.forEach(function (r) { state.rects.push({ l: r.l, x0: r.x0 + wA, y0: r.y0, x1: r.x1 + wA, y1: r.y1 }); });
+      state.labels.push({ name: "Y", x: wA + 275, y: 630 }); state.w = wA + 380;
+      state.labels.forEach(function (p) { if (p.name === "VDD" || p.name === "VSS") p.x = state.w / 2; });
+      tgtSet(k === "taskBUF" ? "BUF" : "AND2");
     } else { state = fromCell(k); tgtSet(k); }
     sel = null; hi = null; document.getElementById("lb-sel").innerHTML = "불러왔다: " + k + ". DRC 위반을 누르면 위치와 이유가 여기에 나온다."; update();
   }
@@ -165,7 +176,7 @@
       state.rects = q.l.split("_").filter(Boolean).map(function (t) { var L = KEYS[parseInt(t[0], 36)], v = t.slice(1).split(".").map(function (x) { return parseInt(x, 36) - 1000; }); return { l: L, x0: v[0], y0: v[1], x1: v[2], y1: v[3] }; }).filter(function (r) { return r.l && isFinite(r.x0); });
       state.labels = (q.p || "").split("_").filter(Boolean).map(function (t) { var v = t.split("."); return { name: v[0], x: parseInt(v[1], 36) - 1000, y: parseInt(v[2], 36) - 1000 }; });
       state.w = Number(q.w) || W0;
-      if (q.t && C.CELLS[q.t]) tgtSet(q.t);
+      if (q.t && TG(q.t)) tgtSet(q.t);
       return true;
     } catch (e) { return false; }
   }
@@ -177,6 +188,18 @@
   palB.forEach(function (b) { b.addEventListener("click", function () { layer = b.dataset.k; if (tool !== "draw") toolSeg.set("draw"); palSync(); }); });
   var toolSeg = PB.seg("lb-tool", function (v) { tool = v; document.getElementById("lb-labwrap").style.display = v === "label" ? "" : "none"; lcv.redraw(); });
   PB.seg("lb-lab", function (v) { labName = v; });
+  var EXTRA = {
+    BUF: { fn: "Y = A (INV 두 개)", sch: [{ t: "n", g: "A", s: "VSS", d: "n1" }, { t: "p", g: "A", s: "VDD", d: "n1" }, { t: "n", g: "n1", s: "VSS", d: "Y" }, { t: "p", g: "n1", s: "VDD", d: "Y" }] },
+    AND2: { fn: "Y = A·B (NAND2 + INV)", sch: [{ t: "n", g: "A", s: "VSS", d: "n1" }, { t: "n", g: "B", s: "n1", d: "n2" }, { t: "p", g: "A", s: "VDD", d: "n2" }, { t: "p", g: "B", s: "VDD", d: "n2" }, { t: "n", g: "n2", s: "VSS", d: "Y" }, { t: "p", g: "n2", s: "VDD", d: "Y" }] },
+  };
+  function TG(k) { return C.CELLS[k] || EXTRA[k]; }
+  [].slice.call(document.querySelectorAll("[data-add]")).forEach(function (b) { b.addEventListener("click", function () {
+    var c = C.CELLS[b.dataset.add], x = state.w; push();
+    c.rects.forEach(function (r) { state.rects.push({ l: r.l, x0: r.x0 + x, y0: r.y0, x1: r.x1 + x, y1: r.y1 }); });
+    state.w = x + c.w; state.labels.forEach(function (p) { if (p.name === "VDD" || p.name === "VSS") p.x = state.w / 2; });
+    document.getElementById("lb-sel").innerHTML = "<b>" + c.name + "</b>를 x = " + x + " nm에 붙였다. 레일과 N-웰이 이어진다. 셀 사이 연결은 M1 또는 M2 + V1로 그리자.";
+    update();
+  }); });
   var tgtSeg = PB.seg("lb-tgt", function (v) { tgt = v; update(); });
   function tgtSet(v) { tgt = v; tgtSeg.set(v, false); }
   [].slice.call(document.querySelectorAll("[data-load]")).forEach(function (b) { b.addEventListener("click", function () { load(b.dataset.load); }); });
@@ -206,13 +229,13 @@
     var rs = withIds();
     res.viol = C.drc(rs);
     res.ext = rs.length ? C.extract(rs, state.labels) : { devices: [], errors: [], shorts: [], opens: [], diff: [], nets: [] };
-    res.lvs = C.lvs(res.ext, C.CELLS[tgt].sch);
+    res.lvs = C.lvs(res.ext, TG(tgt).sch);
     var vb = document.getElementById("lb-viol");
     vb.innerHTML = res.viol.length ? res.viol.map(function (v, i) { return '<button data-i="' + i + '"><b>' + v.id + "</b>" + v.rule.desc + " — " + v.msg + "</button>"; }).join("") : '<span class="ok-t">위반 없음 ✓</span>';
     [].slice.call(vb.querySelectorAll("button")).forEach(function (b) { b.addEventListener("click", function () { hi = res.viol[Number(b.dataset.i)]; [].slice.call(vb.querySelectorAll("button")).forEach(function (x) { x.classList.toggle("on", x === b); }); var r = hi.rule; document.getElementById("lb-sel").innerHTML = "<b>" + r.id + "</b> " + r.desc + "<br>" + r.why + '<br><a href="' + C.PBOOK + r.pb + '.html" target="_blank" rel="noopener">관련 공정: ProcessBook ↗</a>'; lcv.redraw(); }); });
     var pins = ["A", "B", "Y", "VDD", "VSS"].filter(function (n) { return state.labels.some(function (p) { return p.name === n; }); });
     document.getElementById("lb-net").textContent = C.spice("LAB_CELL", res.ext, pins);
-    document.getElementById("lb-lvs").innerHTML = "<b>LVS (목표 " + tgt + ": " + C.CELLS[tgt].fn + ")</b> " + (res.lvs.match ? '<span class="lvs-ok">일치 ✓</span>' : '<span class="lvs-bad">불일치</span><br>' + (res.lvs.msgs.length ? res.lvs.msgs.join("<br>") : "라벨(A·B·Y)을 확인하자"));
+    document.getElementById("lb-lvs").innerHTML = "<b>LVS (목표 " + tgt + ": " + TG(tgt).fn + ")</b> " + (res.lvs.match ? '<span class="lvs-ok">일치 ✓</span>' : '<span class="lvs-bad">불일치</span><br>' + (res.lvs.msgs.length ? res.lvs.msgs.join("<br>") : "라벨(A·B·Y)을 확인하자"));
     PB.stat("lb-o-d", res.viol.length ? '<span class="lvs-bad">' + res.viol.length + "건</span>" : '<span class="lvs-ok">0 ✓</span>');
     PB.stat("lb-o-l", res.lvs.match ? '<span class="lvs-ok">일치</span>' : '<span class="lvs-bad">불일치</span>');
     var nN = res.ext.devices.filter(function (d) { return d.t === "n"; }).length;
@@ -220,6 +243,8 @@
     var bb = C.bbox(state.rects.filter(function (r) { return r.l === "od" || r.l === "po" || r.l === "m1"; }));
     PB.stat("lb-o-a", state.rects.length + " <small>· " + ((Math.max(state.w, bb.x1) * H0) / 1e6).toFixed(3) + " µm²</small>");
     lcv.redraw(); xcv.redraw();
+    if (!res.viol.length && res.lvs.match && edits >= 3) PB.track("e", "labclean");
+    try { document.getElementById("lb-pb").href = C.toProcessBook(withIds(), state.cut, { period: state.cut.dir === "h" ? state.w : H0 }).url; } catch (e) {}
   }
   /* ---------- 캔버스 */
   var tr = null, drag = null;

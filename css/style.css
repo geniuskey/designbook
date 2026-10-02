@@ -432,3 +432,11 @@ svg .ink { stroke: #1f2a3a; stroke-width: .8; fill: none; opacity: .45; }
 .btn.sm { padding: 5px 10px; font-size: 13px; }
 .btn:disabled { opacity: .45; cursor: default; }
 .ok-t { color: var(--ok); } .bad-t { color: var(--bad); } .warn-t { color: var(--warn); }
+
+/* ------------------------------------------------------------------ 진행 · 배지 */
+.pb-prog { font-size: 13px; gap: 4px; color: var(--text-dim); text-decoration: none !important; }
+#pb-toasts { position: fixed; right: 16px; bottom: 16px; z-index: 90; display: grid; gap: 8px; max-width: min(320px, calc(100vw - 32px)); }
+.pb-toast { background: var(--bg-elev); border: 1px solid var(--accent); border-radius: 12px; box-shadow: var(--shadow); padding: 10px 14px; font-size: 14px; line-height: 1.5; color: var(--text); transform: translateY(16px); opacity: 0; transition: transform .3s, opacity .3s; }
+.pb-toast.in { transform: none; opacity: 1; }
+.pb-toast small { color: var(--text-dim); }
+@media (max-width: 640px) { .pb-prog span { display: none; } }

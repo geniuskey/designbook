@@ -92,7 +92,7 @@
   /* ------------------------------------------------------------ 설계 규칙 (EDU45) */
   const RULES = [
     { id: "OD.W.1", type: "width", layer: "od", v: 120, desc: "활성 영역 최소 폭", why: "좁은 실리콘 섬은 STI 식각·갭필에서 무너지거나 응력으로 결함이 생긴다.", pb: "etch" },
-    { id: "OD.S.1", type: "space", layer: "od", v: 140, desc: "활성 영역 최소 간격", why: "간격이 STI 트렌치 폭이다. 좁으면 갭필 보이드가 생기고 소자 사이 격리가 약해진다.", pb: "deposition" },
+    { id: "OD.S.1", type: "space", layer: "od", v: 100, desc: "활성 영역 최소 간격", why: "간격이 STI 트렌치 폭이다. 좁으면 갭필 보이드가 생기고 소자 사이 격리가 약해진다.", pb: "deposition" },
     { id: "PO.W.1", type: "width", layer: "po", v: 50, desc: "폴리 최소 폭 (= 최소 게이트 길이)", why: "게이트 노광 해상도와 단채널 효과가 정한다.", pb: "litho" },
     { id: "PO.S.1", type: "space", layer: "po", v: 80, desc: "폴리 최소 간격", why: "노광 해상도와 식각 잔류물(브리징) 때문에.", pb: "resist" },
     { id: "PO.EX.1", type: "endcap", layer: "po", other: "od", v: 60, desc: "게이트의 활성 영역 밖 연장(엔드캡)", why: "선 끝은 노광에서 짧아진다(선 끝 후퇴). 모자라면 게이트가 활성 영역을 다 덮지 못해 소스와 드레인이 이어진다.", pb: "resist" },
@@ -171,6 +171,18 @@
       pins: [{ name: "A", x: 120, y: 745 }, { name: "B", x: 335, y: 745 }, { name: "Y", x: 465, y: 900 }, { name: "VDD", x: 300, y: 1260 }, { name: "VSS", x: 300, y: 0 }],
       sch: [{ t: "p", g: "A", s: "VDD", d: "p1", w: 330 }, { t: "p", g: "B", s: "p1", d: "Y", w: 330 },
         { t: "n", g: "A", s: "VSS", d: "Y", w: 300 }, { t: "n", g: "B", s: "VSS", d: "Y", w: 300 }],
+    },
+    INV_X2: {
+      name: "INV_X2", fn: "Y = A' (구동력 2배)", desc: "두 핑거 인버터", w: 3 * CPP,
+      rects: [].concat(common(570), [
+        R("od", 50, 150, 520, 450), R("od", 50, 780, 520, 1110),
+        R("po", 165, 90, 215, 1170, "A"), R("po", 355, 90, 405, 1170, "A"), R("po", 80, 565, 405, 675, "A"),
+        ...COLS(80, NY), ...COLS(260, NY), ...COLS(440, NY), ...COLS(80, PY), ...COLS(260, PY), ...COLS(440, PY), R("co", 95, 595, 145, 645),
+        R("m1", 75, 0, 135, 405, "VSS"), R("m1", 435, 0, 495, 405, "VSS"), R("m1", 75, 835, 135, 1260, "VDD"), R("m1", 435, 835, 495, 1260, "VDD"),
+        R("m1", 255, 195, 315, 1055, "Y"), R("m1", 90, 520, 150, 720, "A"),
+      ]),
+      pins: [{ name: "A", x: 120, y: 690 }, { name: "Y", x: 285, y: 300 }, { name: "VDD", x: 300, y: 1260 }, { name: "VSS", x: 300, y: 0 }],
+      sch: [{ t: "n", g: "A", s: "VSS", d: "Y", w: 600 }, { t: "p", g: "A", s: "VDD", d: "Y", w: 660 }],
     },
   };
   Object.values(CELLS).forEach((c) => { c.h = H; c.area = c.w * H; c.rects.forEach((r, i) => (r.id = i)); });
@@ -745,7 +757,104 @@
     return { rects: out, pins, w: x };
   }
 
+  /* ------------------------------------------------------------ ProcessBook 공정 실험실로 넘기기 */
+  /**
+   * 절단선에 걸린 레이어 구간을 ProcessBook 2D 공정 엔진(XS)의 레시피로 바꾼다.
+   * ProcessBook 12장 CMOS 흐름과 같은 순서이며, 각 노광 단계의 clear/chrome 구간이 레이아웃에서 온다.
+   * 반환: { url, steps, dom }  (ProcessBook lab.html#r=base64(JSON{d, s}))
+   */
+  function toProcessBook(rects, cut, opts = {}) {
+    const FIELD = 1600, H2 = cut.dir === "h";
+    // 셀은 행 안에서 옆으로 이어 붙고(가로 절단), 위아래 행은 뒤집혀 붙는다(세로 절단). 그 반복을 1.6 µm 영역에 채운다.
+    const bb = bbox(rects), P = opts.period || (H2 ? Math.max(bb.x1, 100) : H);
+    const xs = xsection(rects, cut, { span: [0, P] });
+    const c0 = FIELD / 2 - P / 2, off = c0, n = Math.ceil(FIELD / P / 2) + 1;
+    const m = (iv) => {
+      const out = [];
+      for (let k = -n; k <= n; k++) {
+        const flip = !H2 && (k & 1);
+        iv.forEach(([a, b]) => { const A = flip ? P - b : a, B = flip ? P - a : b; out.push([A + c0 + k * P, B + c0 + k * P]); });
+      }
+      return mergeIv(out.map(([a, b]) => [Math.round(Math.max(0, a)), Math.round(Math.min(FIELD, b))]).filter((v) => v[1] > v[0]));
+    };
+    const I = xs.I;
+    const inv = (iv) => complement(m(iv), 0, FIELD);
+    const off0 = off;
+    const OD = m(I.od), NW = m(I.nw), PO = m(I.po), NP = m(I.np), PP = m(I.pp), CO = m(I.co), M1 = m(I.m1);
+    const L = (o) => Object.assign({ op: "litho", thick: 160, wl: 193, NA: 1.35, sigma: 0.6, dose: 24, focus: 0, swing: 0.1, peb: 8, dev: 40, k: "LITH" }, o);
+    const EUV = { wl: 13.5, NA: 0.33 }, KRF = { wl: 248, NA: 0.8 };
+    const strip = { op: "strip", mat: "pr", k: "STRIP", label: "감광막 제거", desc: "" };
+    const tag = cut.dir === "h" ? "y = " + cut.y : "x = " + cut.x;
+    const S = [];
+    const add = (s) => S.push(s);
+    // ① STI (마스크 1)
+    add({ op: "depo", mat: "ox", mode: "ald", thick: 10, k: "OX", label: "패드 산화막", desc: "DesignBook 레이아웃(" + tag + " nm 절단선)에서 만든 레시피. 질화막 응력 완충용 얇은 산화막." });
+    add({ op: "depo", mat: "nit", mode: "cvd", thick: 50, stick: 0.2, k: "DEP", label: "질화막 하드마스크", desc: "STI CMP의 정지막." });
+    if (OD.length) {
+      add(L({ chrome: OD, dose: 22, label: "마스크 1 · 활성 영역 (OD)", desc: "레이아웃의 OD 구간만 감광막으로 남긴다. 나머지가 STI가 된다." }));
+      add({ op: "etch", sel: { nit: 1, ox: 0.6, pr: 0.25, si: 0.1 }, rate: 5, time: 14, ion: 0.95, sigma: 2, k: "ETCH", label: "하드마스크 식각", desc: "" });
+      add({ op: "etch", sel: { si: 1, ox: 0.02, nit: 0.04, pr: 0.25 }, rate: 6, time: 34, ion: 0.88, sigma: 4, k: "ETCH", label: "STI 트렌치 식각", desc: "OD가 없는 곳을 판다." });
+      add(strip);
+      add({ op: "depo", mat: "ox", mode: "cvd", thick: 170, stick: 0.08, k: "DEP", label: "갭필 산화막", desc: "" });
+      add({ op: "cmp", stop: "nit", level: 0, over: 4, dish: { ox: 6 }, k: "CMP", label: "STI CMP (질화막 정지)", desc: "" });
+    }
+    add({ op: "etch", wet: true, sel: { nit: 1, ox: 0.03 }, rate: 2, time: 30, k: "ETCH", label: "질화막 제거 (인산)", desc: "" });
+    add({ op: "etch", wet: true, sel: { ox: 1 }, rate: 2, time: 8, k: "ETCH", label: "패드 산화막 제거 · STI 완성", desc: "" });
+    // ② 웰 (마스크 2·3)
+    if (inv(I.nw).length) {
+      add(L(Object.assign({ thick: 420, chrome: NW, label: "마스크 2 · p-웰 (NW 반전)", desc: "NW 안을 가리고 바깥에 붕소를 넣는다." }, KRF)));
+      add({ op: "implant", species: "B", E: 45, dose: 1.5e13, tilt: 0, k: "IMP", label: "p-웰 주입 B 45 keV", desc: "" }); add(strip);
+    }
+    if (NW.length) {
+      add(L(Object.assign({ thick: 420, chrome: inv(I.nw), label: "마스크 3 · n-웰 (NW)", desc: "NW 밖을 가리고 안에 인을 넣는다." }, KRF)));
+      add({ op: "implant", species: "P", E: 110, dose: 2e13, tilt: 0, k: "IMP", label: "n-웰 주입 P 110 keV", desc: "" }); add(strip);
+    }
+    add({ op: "anneal", T: 1050, time: 15, k: "ANL", label: "웰 어닐", desc: "" });
+    // ③ 게이트 (마스크 4)
+    add({ op: "depo", mat: "hk", mode: "ald", thick: 10, k: "DEP", label: "게이트 절연막 (과장)", desc: "실제 1~2 nm. 셀 크기(10 nm)로 그렸다." });
+    add({ op: "depo", mat: "poly", mode: "cvd", thick: 80, stick: 0.15, k: "DEP", label: "폴리실리콘 80 nm", desc: "" });
+    add(L(Object.assign({ thick: 100, chrome: PO, label: "마스크 4 · 게이트 (PO)", desc: "레이아웃의 PO 구간만 남긴다." }, EUV)));
+    add({ op: "etch", sel: { poly: 1, si: 1, hk: 0.02, ox: 0.02, pr: 0.3 }, rate: 5, time: 20, ion: 0.96, sigma: 2, k: "ETCH", label: "게이트 식각", desc: "" });
+    add(strip);
+    add({ op: "etch", sel: { hk: 1, poly: 0.02, si: 0.02 }, rate: 2, time: 6, ion: 1, sigma: 1.5, k: "ETCH", label: "게이트 절연막 잔류 제거", desc: "" });
+    // ④ LDD · 스페이서 · S/D (마스크 5~8)
+    const imp = (iv, no, sp, E, dose, nm) => { if (!iv.length) return; add(L({ thick: 180, chrome: complement(iv, 0, FIELD), label: "마스크 " + no + " · " + nm, desc: "주입 영역 밖을 가린다. 게이트·스페이서가 자기 정렬 마스크." })); add({ op: "implant", species: sp, E, dose, tilt: 0, k: "IMP", label: nm + " " + sp + " " + E + " keV", desc: "" }); add(strip); };
+    imp(NP, 5, "As", 4, 8e14, "n-LDD"); imp(PP, 6, "BF2", 5, 8e14, "p-LDD");
+    add({ op: "depo", mat: "nit", mode: "ald", thick: 24, k: "DEP", label: "스페이서 질화막 (마스크 없음)", desc: "" });
+    add({ op: "etch", sel: { nit: 1, si: 0.05, poly: 0.05, ox: 0.1 }, rate: 4, time: 7, ion: 1, sigma: 1.5, k: "ETCH", label: "스페이서 에치백", desc: "" });
+    imp(NP, 7, "As", 20, 3e15, "n⁺ S/D"); imp(PP, 8, "B", 4, 3e15, "p⁺ S/D");
+    add({ op: "anneal", T: 1050, time: 2, k: "ANL", label: "스파이크 어닐", desc: "" });
+    add({ op: "silicide", depth: 12, k: "SIL", label: "살리사이드 (마스크 없음)", desc: "" });
+    // ⑤ 콘택 (마스크 9) · M1 (마스크 10)
+    add({ op: "depo", mat: "nit", mode: "ald", thick: 16, k: "DEP", label: "CESL", desc: "" });
+    add({ op: "depo", mat: "ox", mode: "cvd", thick: 260, stick: 0.1, k: "DEP", label: "PMD 산화막", desc: "" });
+    add({ op: "cmp", stop: "", level: -170, k: "CMP", label: "PMD CMP", desc: "" });
+    if (CO.length) {
+      add(L(Object.assign({ thick: 100, dose: 30, clear: CO, label: "마스크 9 · 콘택 (CO)", desc: "레이아웃의 CO 구간에 구멍을 연다." }, EUV)));
+      add({ op: "etch", sel: { ox: 1, nit: 0.08, pr: 0.25, sil: 0.02 }, rate: 5, time: 38, ion: 0.96, sigma: 2, k: "ETCH", label: "콘택 식각 (CESL 정지)", desc: "" });
+      add({ op: "etch", sel: { nit: 1, ox: 0.2, sil: 0.03, pr: 0.2 }, rate: 3, time: 8, ion: 1, sigma: 1.5, k: "ETCH", label: "CESL 개방", desc: "" });
+      add(strip);
+      add({ op: "depo", mat: "tin", mode: "ald", thick: 10, k: "DEP", label: "Ti/TiN 라이너", desc: "" });
+      add({ op: "depo", mat: "w", mode: "cvd", thick: 30, stick: 0.04, k: "DEP", label: "텅스텐 CVD", desc: "" });
+      add({ op: "cmp", stop: "", level: -166, k: "CMP", label: "텅스텐 CMP", desc: "" });
+    }
+    add({ op: "depo", mat: "nit", mode: "cvd", thick: 16, stick: 0.2, k: "DEP", label: "식각 정지막", desc: "" });
+    add({ op: "depo", mat: "lowk", mode: "cvd", thick: 90, stick: 0.2, k: "DEP", label: "M1 저유전막", desc: "" });
+    if (M1.length) {
+      add(L(Object.assign({ thick: 100, dose: 26, clear: M1, label: "마스크 10 · M1", desc: "레이아웃의 M1 구간에 트렌치를 연다." }, EUV)));
+      add({ op: "etch", sel: { lowk: 1, nit: 0.05, pr: 0.25 }, rate: 5, time: 20, ion: 0.95, sigma: 2, k: "ETCH", label: "M1 트렌치 식각", desc: "" });
+      add({ op: "etch", sel: { nit: 1, lowk: 0.1, ox: 0.1, w: 0.01 }, rate: 3, time: 6, ion: 1, sigma: 1.5, k: "ETCH", label: "정지막 개방", desc: "" });
+      add(strip);
+      add({ op: "depo", mat: "tin", mode: "pvd", thick: 10, cosn: 3, k: "DEP", label: "배리어", desc: "" });
+      add({ op: "depo", mat: "cu", mode: "cvd", thick: 70, stick: 0.02, k: "DEP", label: "구리 채움", desc: "" });
+      add({ op: "cmp", stop: "", level: -272, dish: { cu: 4 }, k: "CMP", label: "구리 CMP · M1 완성", desc: "DesignBook 레이아웃의 절단선 단면이 ProcessBook 공정 엔진으로 완성되었다." });
+    }
+    const data = JSON.stringify({ d: "wide", s: S });
+    const b64 = typeof btoa === "function" ? btoa(unescape(encodeURIComponent(data))) : Buffer.from(data, "utf8").toString("base64");
+    return { url: (opts.base || PBOOK) + "lab.html#r=" + b64, steps: S, dom: "wide", off: off0, period: P };
+  }
+
   window.CELL = { LAYERS, LAYER, DRAW_ORDER, STAGES, MAT, RULES, RULE, CELLS, H, CPP, MP, PBOOK,
-    drc, extract, lvs, spice, xsection, drawXsec, drawLayout, hit, layerInfo, place, bbox, gates,
+    drc, extract, lvs, spice, xsection, drawXsec, drawLayout, hit, layerInfo, place, bbox, gates, toProcessBook,
     util: { ov, touch, inter, grow, dist, subtract, covered, mergeIv, complement } };
 })();

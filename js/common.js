@@ -24,7 +24,9 @@
     { slug: "opc",       num: "11", title: "OPC와 리소그래피 친화 설계", desc: "그린 대로 찍히지 않는다. 공중상과 근접 효과, 규칙·모델 기반 OPC, 세리프·해머헤드·SRAF.", tags: ["DFM", "sim"] },
     { slug: "mask",      num: "12", title: "테이프아웃과 마스크 제작",   desc: "GDS에서 레티클까지. 레이어→마스크 대응, 분할(fracturing)과 전자빔 묘화, 마스크 수와 비용.", tags: ["제조 인계", "sim"] },
     { slug: "lab",       num: "13", title: "레이아웃 실험실",           desc: "레이어를 골라 사각형을 그리면 DRC가 실시간으로 검사하고, 자른 선의 공정 단면이 그려지는 샌드박스.", tags: ["샌드박스", "sim"] },
-    { slug: "glossary",  num: "14", title: "용어집 & 종합 퀴즈",        desc: "핵심 설계 용어를 검색하고, 종합 퀴즈로 실력을 점검하자.", tags: ["정리"] },
+    { slug: "flow",      num: "14", title: "칩 하나 끝까지",           desc: "식 한 줄을 써서 합성·배치·배선·타이밍·DRC·LVS·마스크·GDS까지 한 화면에서 끝낸다. 진짜 GDSII 파일을 내려받는다.", tags: ["종합 실습", "sim"] },
+    { slug: "arcade",    num: "15", title: "도전 과제",               desc: "타이밍 맞추기, 배선 퍼즐, DRC 위반 찾기, 멀티 패터닝 색칠. 점수와 배지로 실력을 겨룬다.", tags: ["게임", "sim"] },
+    { slug: "glossary",  num: "16", title: "용어집 & 종합 퀴즈",        desc: "핵심 설계 용어를 검색하고, 종합 퀴즈로 실력을 점검하자.", tags: ["정리"] },
   ];
   /** 시리즈의 다른 책 */
   const SERIES = [
@@ -438,6 +440,72 @@
     return T;
   };
 
+
+  /* ------------------------------------------------------------ 학습 진행 · 배지 (브라우저 저장소) */
+  const PKEY = "db-progress";
+  const BADGES = [
+    { id: "first", icon: "🚀", name: "첫 걸음", desc: "아무 장이나 하나 열기", test: (p) => Object.keys(p.v).length >= 1 },
+    { id: "explorer", icon: "🧭", name: "시뮬레이터 탐험가", desc: "서로 다른 시뮬레이터 20개 써 보기", test: (p) => simCount(p) >= 20 },
+    { id: "tinker", icon: "🔧", name: "만지작 장인", desc: "시뮬레이터 40개 써 보기", test: (p) => simCount(p) >= 40 },
+    { id: "quiz", icon: "🎯", name: "퀴즈 명사수", desc: "장 퀴즈 30문항 맞히기", test: (p) => quizRight(p) >= 30 },
+    { id: "allch", icon: "📚", name: "완독", desc: "모든 장 열어 보기", test: (p) => CHAPTERS.every((c) => p.v[c.slug]) },
+    { id: "cell", icon: "🧱", name: "셀 해부학자", desc: "4장 시뮬레이터 6개 모두 써 보기", test: (p) => Object.keys(p.s.stdcell || {}).length >= 6 },
+    { id: "bridge", icon: "🌉", name: "설계 ↔ 제조", desc: "레이아웃을 ProcessBook 공정 엔진으로 넘기기", test: (p) => !!p.e.pbook },
+    { id: "tapeout", icon: "💾", name: "테이프아웃", desc: "14장에서 GDSII 파일 내려받기", test: (p) => !!p.e.gds },
+    { id: "lvs", icon: "✅", name: "LVS 통과", desc: "13장 실험실에서 DRC·LVS를 모두 통과", test: (p) => !!p.e.labclean },
+    { id: "timing", icon: "⏱️", name: "타이밍 클로저", desc: "타이밍 퍼즐 3단계 모두 슬랙 ≥ 0", test: (p) => (p.g.timing || 0) >= 3 },
+    { id: "router", icon: "🧵", name: "배선 장인", desc: "배선 퍼즐 5판 해결", test: (p) => (p.g.route || 0) >= 5 },
+    { id: "hunter", icon: "🔍", name: "DRC 사냥꾼", desc: "DRC 찾기에서 한 판 만점", test: (p) => !!p.g.drcperfect },
+    { id: "color", icon: "🎨", name: "멀티 패터닝 분해사", desc: "색칠 퍼즐 4단계 모두 해결", test: (p) => (p.g.color || 0) >= 4 },
+  ];
+  function simCount(p) { return Object.values(p.s).reduce((a, o) => a + Object.keys(o).length, 0); }
+  function quizRight(p) { return Object.values(p.q).reduce((a, o) => a + Object.values(o).filter(Boolean).length, 0); }
+  function pload() { try { const o = JSON.parse(localStorage.getItem(PKEY) || "{}"); return Object.assign({ v: {}, s: {}, q: {}, g: {}, e: {}, b: {}, n: {} }, o); } catch (e) { return { v: {}, s: {}, q: {}, g: {}, e: {}, b: {}, n: {} }; } }
+  function psave(p) { try { localStorage.setItem(PKEY, JSON.stringify(p)); } catch (e) {} }
+  function checkBadges(p) {
+    const fresh = BADGES.filter((b) => !p.b[b.id] && b.test(p));
+    fresh.forEach((b) => (p.b[b.id] = Date.now()));
+    if (fresh.length) { psave(p); fresh.forEach((b, i) => setTimeout(() => toast(b.icon + " 배지 획득: <b>" + b.name + "</b><br><small>" + b.desc + "</small>"), i * 900)); }
+  }
+  function toast(html) {
+    if (!document.body) return;
+    let box = document.getElementById("pb-toasts");
+    if (!box) { box = document.createElement("div"); box.id = "pb-toasts"; document.body.appendChild(box); }
+    const t = document.createElement("div"); t.className = "pb-toast"; t.innerHTML = html; box.appendChild(t);
+    setTimeout(() => t.classList.add("in"), 20); setTimeout(() => { t.classList.remove("in"); setTimeout(() => t.remove(), 400); }, 3800);
+  }
+  PB.BADGES = BADGES;
+  PB.toast = toast;
+  PB.progress = function () { return pload(); };
+  PB.progressStats = function (p) { p = p || pload(); return { visited: Object.keys(p.v).length, sims: simCount(p), quiz: quizRight(p), badges: Object.keys(p.b).length }; };
+  /** PB.track('e','gds') 이벤트 · PB.track('g','route', n) 게임 최고 기록(큰 값 유지) */
+  PB.track = function (kind, key, val) {
+    const p = pload();
+    if (kind === "e") p.e[key] = val == null ? true : val;
+    else if (kind === "g") { if (typeof val === "boolean") p.g[key] = p.g[key] || val; else p.g[key] = Math.max(p.g[key] || 0, val || 0); }
+    psave(p); checkBadges(p);
+  };
+  PB.resetProgress = function () { try { localStorage.removeItem(PKEY); } catch (e) {} };
+  function trackPage(slug) {
+    const p = pload();
+    if (slug) { p.v[slug] = (p.v[slug] || 0) + 1; p.n[slug] = [document.querySelectorAll(".sim").length, document.querySelectorAll(".quiz-q").length]; }
+    psave(p); checkBadges(p);
+    let simT = 0;
+    const touch = (e) => {
+      const sim = e.target.closest && e.target.closest(".sim"); if (!sim || !slug) return;
+      const id = sim.id || "sim" + [...document.querySelectorAll(".sim")].indexOf(sim);
+      const q = pload(); q.s[slug] = q.s[slug] || {}; if (q.s[slug][id]) return;
+      q.s[slug][id] = 1; psave(q); clearTimeout(simT); simT = setTimeout(() => checkBadges(pload()), 300);
+    };
+    document.addEventListener("input", touch, true); document.addEventListener("click", touch, true);
+    document.addEventListener("answered", (e) => {
+      if (!slug) return;
+      const qs = [...document.querySelectorAll(".quiz-q")], i = qs.indexOf(e.target);
+      const q = pload(); q.q[slug] = q.q[slug] || {}; if (q.q[slug][i] == null) q.q[slug][i] = !!e.detail.correct; psave(q); checkBadges(q);
+    });
+    document.addEventListener("click", (e) => { const a = e.target.closest && e.target.closest('a[href*="processbook.euiyun.com/chapters/lab.html#r="]'); if (a) PB.track("e", "pbook"); }, true);
+  }
+
   /* ------------------------------------------------------------ layout build */
   const LOGO = `<svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="pbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--accent-2)"/></linearGradient></defs><rect x="2" y="2" width="28" height="28" rx="8" fill="url(#pbg)"/><path d="M6 7.5h20M6 24.5h20" stroke="#fff" stroke-width="2.2"/><rect x="9" y="11" width="14" height="4" rx="1" fill="#fff" opacity=".45"/><rect x="9" y="17.5" width="14" height="4" rx="1" fill="#fff" opacity=".45"/><path d="M14 9.5v13M18 9.5v13" stroke="#fff" stroke-width="1.8"/><circle cx="11.5" cy="13" r="1.1" fill="#fff"/><circle cx="20.5" cy="19.5" r="1.1" fill="#fff"/></svg>`;
   const ICON_MENU = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>`;
@@ -460,6 +528,7 @@
       <button class="pb-btn icon" id="pb-menu" aria-label="챕터 목록">${ICON_MENU}</button>
       <a class="pb-logo" href="${href("")}">${LOGO}<span>DesignBook <small>반도체 설계 교과서</small></span></a>
       <span class="spacer"></span>
+      <a class="pb-btn pb-prog" id="pb-prog" href="${href("arcade")}#progress" title="학습 진행 · 배지">🏅 <span id="pb-prog-n">0</span></a>
       <button class="pb-btn icon" id="pb-theme" aria-label="테마 전환"></button>
       <div class="pb-progress" id="pb-progress"></div>`;
     body.prepend(bar);
@@ -492,6 +561,8 @@
       applyTheme(next); setIcon();
     });
 
+    trackPage(curSlug);
+    const pn = bar.querySelector("#pb-prog-n"); const st0 = PB.progressStats(); pn.textContent = st0.badges + "/" + BADGES.length;
     // progress
     const prog = bar.querySelector("#pb-progress");
     const onScroll = () => { const h = document.documentElement.scrollHeight - innerHeight; prog.style.width = (h > 0 ? (scrollY / h) * 100 : 0) + "%"; };
