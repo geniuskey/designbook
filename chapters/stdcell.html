@@ -241,10 +241,12 @@
           <label class="check"><input type="checkbox" id="t3-ild" checked> 절연막(PMD·저유전막) 보이기</label>
           <label class="check"><input type="checkbox" id="t3-ex"> 세로 2배 과장</label>
           <label class="check"><input type="checkbox" id="t3-row"> 셀 3개를 이어 붙인 행으로</label>
+          <label class="check"><input type="checkbox" id="t3-fin"> FinFET 구조로 보기</label>
+          <label class="ctrl"><span>핀 개수 (활성 영역당) <output id="t3-nf-out"></output></span><input type="range" id="t3-nf" min="1" max="4" step="1" value="3"></label>
           <div class="info-box" id="t3-info">구조 위에 마우스를 올리면 정보가 나온다.</div>
         </div>
       </div>
-      <div class="sim-note">해볼 것: ① 단계를 0부터 하나씩 올리자. 1에서 OD를 뺀 곳이 파여 산화막(STI)으로 채워지고, 3에서 폴리가 활성 영역과 STI 위를 함께 지나며, 7에서 콘택 기둥이, 8에서 구리 M1이 올라온다. ② 절연막을 끄면 콘택이 소스·드레인과 폴리 패드 위에 내려앉은 모습이 보인다. 활성 영역 위 게이트에는 콘택이 없다. ③ <b>셀 3개 행</b>을 켜면 이웃 셀의 VDD·VSS 레일과 N-웰이 하나로 이어진다(그림 04-1). (높이 방향은 nm 그대로이며, 게이트 절연막·라이너는 생략했다.)</div>
+      <div class="sim-note">해볼 것: ① 단계를 0부터 하나씩 올리자. 1에서 OD를 뺀 곳이 파여 산화막(STI)으로 채워지고, 3에서 폴리가 활성 영역과 STI 위를 함께 지나며, 7에서 콘택 기둥이, 8에서 구리 M1이 올라온다. ② 절연막을 끄면 콘택이 소스·드레인과 폴리 패드 위에 내려앉은 모습이 보인다. 활성 영역 위 게이트에는 콘택이 없다. ③ <b>셀 3개 행</b>을 켜면 이웃 셀의 VDD·VSS 레일과 N-웰이 하나로 이어진다(그림 04-1). ④ <b>FinFET</b>으로 바꾸면 평평한 활성 영역 대신 가는 실리콘 지느러미(핀)가 STI 위로 솟고, 게이트가 핀의 세 면을 감싼다. 채널 폭은 이제 연속값이 아니라 핀 개수 × (2 × 핀 높이 + 핀 폭)으로 양자화된다(ProcessBook 13장). (높이 방향은 nm 그대로이며, 게이트 절연막·라이너는 생략했다.)</div>
     </div>
   </section>
 
@@ -707,7 +709,9 @@
     var info = document.getElementById("t3-info"), ild = document.getElementById("t3-ild"), ex = document.getElementById("t3-ex"), row = document.getElementById("t3-row");
     var gSt = PB.range("t3-st", function (v) { return v + " · " + C.STAGES[v].name; }, function (v) { stage = v; build(); });
     PB.seg("t3-cell", function (v) { name = v; build(); });
-    [ild, ex, row].forEach(function (c) { c.addEventListener("change", build); });
+    var fin = document.getElementById("t3-fin");
+    var gNf = PB.range("t3-nf", function (v) { return v + "개 → W_eff = " + v * (2 * 45 + 14) + " nm"; }, function () { build(); });
+    [ild, ex, row, fin].forEach(function (c) { c.addEventListener("change", build); });
     var MAT = {}, S = 0.01;   // 1 nm = 0.01 단위
     function mat(key, op) { var k = key + (op || ""); if (!MAT[k]) MAT[k] = new THREE.MeshStandardMaterial({ color: new THREE.Color(C.MAT[key].color).convertSRGBToLinear(), roughness: 0.6, metalness: key === "cu" || key === "w" ? 0.35 : 0.05, transparent: !!op, opacity: op || 1, depthWrite: !op }); return MAT[k]; }
     function box(r, z0, z1, key, meta, op) {
@@ -731,7 +735,13 @@
       var L = function (k) { return { layer: k }; };
       // 기판
       box(B, -300, -200, "si", { txt: "p형 실리콘 기판" });
-      if (!st("sti")) { box(B, -200, 0, "si", { txt: "p형 실리콘 기판 (아직 무늬 없음)" }); }
+      var FIN = fin.checked && st("sti"), fins = [];
+      if (FIN) {
+        var nf = gNf(), FW = 14, FH = 45;
+        box(B, -200, -FH, "ox", { txt: "<b>STI 산화막</b> (핀 사이를 채우고 높이를 낮춤) — 마스크 1 + 핀 정의" });
+        OD.forEach(function (o) { var hgt = o.y1 - o.y0, pitch = hgt / nf; for (var i = 0; i < nf; i++) { var yc = o.y0 + pitch * (i + 0.5); fins.push({ x0: o.x0, x1: o.x1, y0: yc - FW / 2, y1: yc + FW / 2, nw: NW.some(function (n) { return U.ov(n, o); }) }); } });
+        fins.forEach(function (f) { box(f, -200, 0, "si", { txt: "<b>실리콘 핀</b> " + FW + " nm 폭 · STI 위 " + FH + " nm. 게이트가 세 면을 감싼다 (W_eff = 2H + W = " + (2 * FH + FW) + " nm/핀)", layer: "od" }); });
+      } else if (!st("sti")) { box(B, -200, 0, "si", { txt: "p형 실리콘 기판 (아직 무늬 없음)" }); }
       else {
         U.subtract(B, OD).forEach(function (r) { box(r, -200, 5, "ox", { txt: "<b>STI 산화막</b> — OD가 없는 곳. 마스크 1(OD의 반전)" }); });
         OD.forEach(function (o) {
@@ -742,15 +752,16 @@
       }
       // 소스·드레인
       var gp = PO.map(function (r) { return U.grow(r, st("ldd") ? 22 : 0); });
-      if (st("ldd")) OD.forEach(function (o) {
+      if (FIN && st("ldd")) fins.forEach(function (f) { U.subtract(f, gp).forEach(function (r) { var n = NP.some(function (q) { return U.ov(q, r); }); box(r, -12, 3, n ? "nplus" : "pplus", { txt: "<b>" + (n ? "n⁺" : "p⁺") + " 소스·드레인</b> (핀 위 · 실제로는 에피 성장)", layer: n ? "np" : "pp" }); }); });
+      if (!FIN && st("ldd")) OD.forEach(function (o) {
         U.subtract(o, gp).forEach(function (r) {
           var n = NP.some(function (q) { return U.ov(q, r); }), t = st("sd") ? 0.6 : 0.3;
           box(r, -0.5, 1, n ? "nplus" : "pplus", { txt: "<b>" + (n ? "n⁺" : "p⁺") + " 소스·드레인</b> — 마스크 " + (n ? "5·7 (NP)" : "6·8 (PP)") + ", 게이트·스페이서에 자기 정렬", layer: n ? "np" : "pp" });
           if (st("sil")) box(r, 1, 9, "sil", { txt: "<b>실리사이드</b> — 마스크 없음 (자기 정렬)" });
         });
       });
-      if (st("gate")) PO.forEach(function (r) { box(r, 5, 85, "poly", { txt: "<b>폴리 게이트</b> — 마스크 4 (PO). 활성 영역과 겹친 곳이 채널", layer: "po" }); if (st("sil")) box(r, 85, 93, "sil", { txt: "<b>실리사이드</b> (게이트 위) — 마스크 없음" }); });
-      if (st("ldd")) PO.forEach(function (r) { U.subtract(U.grow(r, 22), PO).forEach(function (q) { box(q, 0, 85, "nit", { txt: "<b>질화막 스페이서</b> — 마스크 없음. 컨포멀 증착 + 에치백" }); }); });
+      if (st("gate")) PO.forEach(function (r) { box(r, FIN ? -45 : 5, 85, "poly", { txt: "<b>폴리 게이트</b> — 마스크 4 (PO). 활성 영역과 겹친 곳이 채널", layer: "po" }); if (st("sil")) box(r, 85, 93, "sil", { txt: "<b>실리사이드</b> (게이트 위) — 마스크 없음" }); });
+      if (st("ldd")) PO.forEach(function (r) { U.subtract(U.grow(r, 22), PO).forEach(function (q) { box(q, FIN ? -45 : 0, 85, "nit", { txt: "<b>질화막 스페이서</b> — 마스크 없음. 컨포멀 증착 + 에치백" }); }); });
       if (st("co")) {
         CO.forEach(function (r) { var onP = PO.some(function (q) { return U.ov(q, r) && !OD.some(function (o) { return U.ov(o, r); }); }); box(r, onP ? 93 : 9, 190, "w", { txt: "<b>텅스텐 콘택</b> — 마스크 9 (CO)" + (onP ? ", 폴리 패드 위" : ", 소스·드레인 위"), layer: "co" }); });
         if (ild.checked) box(B, 0, 190, "ox", {}, 0.18);
