@@ -368,7 +368,7 @@
   "use strict";
   function small(v, u) { return v + "<small>" + u + "</small>"; }
   var C = CELL;
-  var VIEW = function (c) { return { x0: -70, y0: -110, x1: c.w + 70, y1: c.h + 120 }; };
+  var VIEW = function (c) { return { x0: -70, y0: -170, x1: c.w + 70, y1: c.h + 120 }; };
   function devCount(c) { var n = c.sch.filter(function (d) { return d.t === "n"; }).length; return (n + " N · " + (c.sch.length - n) + " P"); }
   function pinsOf(c) { return c.pins.filter(function (p) { return p.name !== "VDD" && p.name !== "VSS"; }).concat([{ name: "VDD", x: c.w / 2, y: c.h }, { name: "VSS", x: c.w / 2, y: 0 }]); }
 
