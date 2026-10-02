@@ -134,8 +134,8 @@
       <div class="sim-body side">
         <div class="sim-view"><canvas id="us-cv"></canvas></div>
         <div class="sim-controls">
-          <label class="ctrl"><span>1단 논리 최대 지연 d<sub>1</sub> <output id="us-d1-out"></output></span><input type="range" id="us-d1" min="100" max="800" step="10" value="560"></label>
-          <label class="ctrl"><span>2단 논리 최대 지연 d<sub>2</sub> <output id="us-d2-out"></output></span><input type="range" id="us-d2" min="100" max="800" step="10" value="300"></label>
+          <label class="ctrl"><span><span>1단 논리 최대 지연 d<sub>1</sub></span> <output id="us-d1-out"></output></span><input type="range" id="us-d1" min="100" max="800" step="10" value="560"></label>
+          <label class="ctrl"><span><span>2단 논리 최대 지연 d<sub>2</sub></span> <output id="us-d2-out"></output></span><input type="range" id="us-d2" min="100" max="800" step="10" value="300"></label>
           <label class="ctrl"><span>최소 지연 / 최대 지연 <output id="us-m-out"></output></span><input type="range" id="us-m" min="0.05" max="0.8" step="0.05" value="0.25"></label>
           <label class="ctrl"><span>FF₂ 클럭 스큐 x <output id="us-x-out"></output></span><input type="range" id="us-x" min="-250" max="250" step="5" value="0"></label>
           <button class="btn" id="us-opt">최적 스큐로 맞추기</button>
@@ -233,7 +233,7 @@
           <div class="ctrl"><span>알고리즘</span><div class="seg" id="ct-a"><button data-value="star">스타</button><button data-value="mmm" class="on">MMM</button><button data-value="buf">MMM+버퍼</button><button data-value="zsm">영 스큐 병합</button></div></div>
           <label class="ctrl"><span>싱크 수 <output id="ct-n-out"></output></span><input type="range" id="ct-n" min="30" max="120" step="2" value="64"></label>
           <div class="ctrl"><span>싱크 분포</span><div class="seg" id="ct-d"><button data-value="uni" class="on">균일</button><button data-value="clu">뭉침</button></div></div>
-          <label class="ctrl"><span>버퍼당 최대 부하 C<sub>max</sub> <output id="ct-c-out"></output></span><input type="range" id="ct-c" min="10" max="120" step="5" value="40"></label>
+          <label class="ctrl"><span><span>버퍼당 최대 부하 C<sub>max</sub></span> <output id="ct-c-out"></output></span><input type="range" id="ct-c" min="10" max="120" step="5" value="40"></label>
           <button class="btn" id="ct-re">새 싱크 배치</button>
         </div>
       </div>
@@ -306,10 +306,10 @@
       <div class="sim-body side">
         <div class="sim-view"><canvas id="mt-cv"></canvas></div>
         <div class="sim-controls">
-          <label class="ctrl"><span>포획 클럭 f<sub>c</sub> <output id="mt-fc-out"></output></span><input type="range" id="mt-fc" min="0.2" max="4" step="0.05" value="2"></label>
-          <label class="ctrl"><span>데이터 변화율 f<sub>d</sub> <output id="mt-fd-out"></output></span><input type="range" id="mt-fd" min="1" max="500" step="1" value="100"></label>
+          <label class="ctrl"><span><span>포획 클럭 f<sub>c</sub></span> <output id="mt-fc-out"></output></span><input type="range" id="mt-fc" min="0.2" max="4" step="0.05" value="2"></label>
+          <label class="ctrl"><span><span>데이터 변화율 f<sub>d</sub></span> <output id="mt-fd-out"></output></span><input type="range" id="mt-fd" min="1" max="500" step="1" value="100"></label>
           <label class="ctrl"><span>재생 시정수 τ <output id="mt-t-out"></output></span><input type="range" id="mt-t" min="5" max="40" step="1" value="12"></label>
-          <label class="ctrl"><span>메타안정 창 T<sub>0</sub> <output id="mt-0-out"></output></span><input type="range" id="mt-0" min="10" max="200" step="5" value="50"></label>
+          <label class="ctrl"><span><span>메타안정 창 T<sub>0</sub></span> <output id="mt-0-out"></output></span><input type="range" id="mt-0" min="10" max="200" step="5" value="50"></label>
           <div class="ctrl"><span>동기화 플롭 수 N</span><div class="seg" id="mt-n"><button data-value="1">1</button><button data-value="2" class="on">2</button><button data-value="3">3</button><button data-value="4">4</button></div></div>
         </div>
       </div>
