@@ -245,7 +245,7 @@ svg .f-acc2-soft { fill: var(--accent-2-soft); stroke: var(--accent-2); }
 .ctrl { display: grid; gap: 6px; font-size: 14px; }
 .ctrl > span { display: flex; justify-content: space-between; gap: 8px; color: var(--text-dim); }
 .ctrl output { font-family: var(--mono); color: var(--text); font-weight: 600; font-size: 13px; }
-.ctrl select { font: inherit; font-size: 14px; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+.ctrl select { width: 100%; min-width: 0; max-width: 100%; font: inherit; font-size: 14px; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); }
 .ctrl-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .seg { display: inline-flex; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 3px; gap: 2px; flex-wrap: wrap; }
 .seg button { font: inherit; font-size: 13px; border: 0; background: transparent; color: var(--text-dim); padding: 5px 11px; border-radius: 7px; cursor: pointer; }
