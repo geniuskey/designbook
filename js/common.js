@@ -517,6 +517,7 @@
     const root = body.dataset.root != null ? body.dataset.root : body.dataset.chapter ? "../" : "";
     const curSlug = body.dataset.chapter || "";
     const href = (slug) => (slug ? `${root}chapters/${slug}.html` : `${root}index.html`);
+    const feedbackUrl = "https://books.euiyun.com/feedback.html?book=designbook&page=" + encodeURIComponent(location.href);
 
     // favicon
     if (!document.querySelector('link[rel="icon"]')) { const fi = document.createElement("link"); fi.rel = "icon"; fi.type = "image/svg+xml"; fi.href = root + "favicon.svg"; document.head.appendChild(fi); }
@@ -532,6 +533,13 @@
       <a class="pb-btn pb-prog" id="pb-prog" href="${href("arcade")}#progress" title="학습 진행 · 배지">🏅 <span id="pb-prog-n">0</span></a>
       <button class="pb-btn icon" id="pb-theme" aria-label="테마 전환"></button>
       <div class="pb-progress" id="pb-progress"></div>`;
+    const feedbackButton = document.createElement("a");
+    feedbackButton.className = bar.className.replace("-topbar", "-btn") + " icon feedback-button";
+    feedbackButton.href = feedbackUrl;
+    feedbackButton.setAttribute("aria-label", "독자 의견 보내기");
+    feedbackButton.title = "독자 의견 보내기";
+    feedbackButton.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6 4V6a2 2 0 0 1 2-2z"/><path d="M8 9h8M8 13h5"/></svg>';
+    bar.querySelector("[id$='-theme']").before(feedbackButton);
     body.prepend(bar);
 
     // drawer
@@ -614,8 +622,8 @@
       시리즈: <a href="${PB.PBOOK}">ProcessBook · 제조 공정</a> · <a href="${href("")}">DesignBook · 설계</a><br>
       © 2026 geniuskey 및 DesignBook 기여자 · 콘텐츠 <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · 코드 <a href="${root}LICENSE-MIT">MIT</a> · <a href="${root}LICENSE.md">라이선스 안내</a>`;
     const feedbackLink = document.createElement("a");
-    feedbackLink.href = "https://books.euiyun.com/feedback.html?book=designbook&page=" + encodeURIComponent(location.href);
-    feedbackLink.textContent = "오류·질문·제안";
+    feedbackLink.href = feedbackUrl;
+    feedbackLink.textContent = "독자 의견";
     foot.append(" · ", feedbackLink);
     body.appendChild(foot);
 
