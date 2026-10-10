@@ -185,7 +185,7 @@
       sch: [{ t: "n", g: "A", s: "VSS", d: "Y", w: 600 }, { t: "p", g: "A", s: "VDD", d: "Y", w: 660 }],
     },
   };
-  Object.values(CELLS).forEach((c) => { c.h = H; c.area = c.w * H; c.rects.forEach((r, i) => (r.id = i)); });
+  Object.values(CELLS).forEach((c) => { c.h = H; c.area = c.w * H; c.sch.forEach((d) => (d.l = 50)); c.rects.forEach((r, i) => (r.id = i)); });
 
   /* ------------------------------------------------------------ 기하 유틸 */
   const ov = (a, b) => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;           // 면적 겹침
@@ -382,15 +382,19 @@
       if (bm.m1[k]) return off.m1 + C.m1.lab[k];
       return -1;
     };
-    const names = {}, shorts = [], opens = [];
+    const names = {}, shorts = [], opens = [], portRoots = {};
+    // 명시된 출력 별칭만 같은 넷 이름으로 정규화한다. 그 밖의 이름 충돌은 단락이다.
+    const canonical = (name) => (opts.aliases && opts.aliases[name]) || name;
     labels.forEach((lb) => {
       const n = nodeAt(lb.x, lb.y, lb.l);
       if (n < 0) { opens.push(lb.name + " 라벨 아래에 금속이 없음"); return; }
       const r = f(n);
-      if (names[r] && names[r] !== lb.name) shorts.push(names[r] + " ↔ " + lb.name);
-      else names[r] = lb.name;
+      const name = canonical(lb.name);
+      if (names[r] && names[r] !== name) shorts.push(names[r] + " ↔ " + lb.name);
+      else names[r] = name;
+      portRoots[lb.name] = r;
     });
-    const seen = {}; labels.forEach((lb) => { const n = nodeAt(lb.x, lb.y, lb.l); if (n < 0) return; const r = f(n); if (seen[lb.name] != null && seen[lb.name] !== r) opens.push(lb.name + " 이 둘 이상으로 끊겨 있음"); seen[lb.name] = r; });
+    const seen = {}; labels.forEach((lb) => { const n = nodeAt(lb.x, lb.y, lb.l); if (n < 0) return; const r = f(n), name = canonical(lb.name); if (seen[name] != null && seen[name] !== r) opens.push(lb.name + " 이 둘 이상으로 끊겨 있음"); seen[name] = r; });
     let auto = 0;
     const netName = (node) => { const r = f(node); if (!names[r]) names[r] = "n" + ++auto; return names[r]; };
     // 트랜지스터
@@ -424,7 +428,8 @@
       }
       diffInfo.push({ net: netName(off.diff + d), area: a * G * G, perim: per * G });
     }
-    return { devices, errors, shorts, opens, diff: diffInfo, nets: [...new Set(Object.values(names))] };
+    const ports = {}; Object.keys(portRoots).forEach((name) => { ports[name] = netName(portRoots[name]); });
+    return { devices, errors, shorts, opens, diff: diffInfo, nets: [...new Set(Object.values(names))], ports };
   }
 
   /** 병렬 소자 합치기 → 서명 목록 */
@@ -432,7 +437,7 @@
     const m = {};
     devs.forEach((d) => {
       const sd = [d.s, d.d].sort();
-      const k = d.t + "|" + d.g + "|" + sd.join(",");
+      const k = d.t + "|" + d.g + "|" + sd.join(",") + "|L=" + (d.L || d.l || 50);
       m[k] = (m[k] || 0) + (d.W || d.w || 1);
     });
     return m;
@@ -453,16 +458,16 @@
       const perm = (arr) => (arr.length <= 1 ? [arr] : arr.flatMap((x, i) => perm(arr.slice(0, i).concat(arr.slice(i + 1))).map((p) => [x].concat(p))));
       for (const p of perm(intS)) {
         const map = {}; intE.forEach((n, i) => (map[n] = p[i]));
-        const devs = ext.devices.map((d) => ({ t: d.t, g: map[d.g] || d.g, s: map[d.s] || d.s, d: map[d.d] || d.d, W: d.W }));
+        const devs = ext.devices.map((d) => ({ t: d.t, g: map[d.g] || d.g, s: map[d.s] || d.s, d: map[d.d] || d.d, W: d.W, L: d.L }));
         const sig = signature(devs);
-        if (Object.keys(sig).sort().join(";") === keysS) { match = true; break; }
+        if (Object.keys(sig).sort().join(";") === keysS && Object.keys(ss).every((key) => Math.abs(sig[key] - ss[key]) < 1e-6)) { match = true; break; }
       }
     }
     const nE = cnt(ext.devices, "n"), pE = cnt(ext.devices, "p");
     const nS = sch.filter((d) => d.t === "n").length, pS = sch.filter((d) => d.t === "p").length;
     if (!match) {
       if (nE !== nS || pE !== pS) msgs.push(`소자 수 불일치: 레이아웃 NMOS ${nE}·PMOS ${pE} / 회로도 NMOS ${nS}·PMOS ${pS} (병렬 소자는 하나로 합쳐 비교)`);
-      else msgs.push("소자 수는 같지만 연결이 다름");
+      else msgs.push("소자 수는 같지만 연결 또는 W/L이 다름");
     }
     return { match: match && !ext.shorts.length && !ext.opens.length && !ext.errors.length, msgs: msgs.concat(ext.errors), pins: [...pins] };
   }

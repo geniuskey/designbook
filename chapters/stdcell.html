@@ -290,7 +290,7 @@
       <li><strong>연결 = 같은 레이어끼리 닿으면 같은 넷</strong>, CO는 M1과 확산(또는 폴리)을, V1은 M1과 M2를 잇는다.</li>
       <li>M1 위의 <strong>핀 라벨</strong>로 넷 이름을 붙이고, 이름 없는 넷은 n1, n2…로 부른다.</li>
     </ol>
-    <p>이렇게 얻은 넷리스트를 합성기가 쓴 회로도와 비교하는 것이 <span class="term">LVS</span><span class="en">(Layout Versus Schematic)</span>다. 아래 시뮬레이터는 이 규칙을 5 nm 격자 위에서 그대로 실행한다. 일부러 결함을 넣어 보자. DRC(설계 규칙 검사)와 LVS가 각각 무엇을 잡아내는지 다르다.</p>
+    <p>이렇게 얻은 넷리스트를 합성기가 쓴 회로도와 비교하는 것이 <span class="term">LVS</span><span class="en">(Layout Versus Schematic)</span>다. 아래 시뮬레이터는 이 규칙을 5 nm 격자 위에서 실행하고, 종류·연결뿐 아니라 같은 L의 병렬 소자를 합한 W와 회로도의 W/L도 비교한다. EDU45 회로도의 L은 50 nm다. 일부러 결함을 넣어 보자. DRC(설계 규칙 검사)와 LVS가 각각 무엇을 잡아내는지 다르다.</p>
     <div class="sim" id="sim-ex">
       <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>추출 · DRC · LVS 맛보기</h3>
         <div class="seg" id="ex-cell"><button data-value="INV_X1" class="on">INV_X1</button><button data-value="NAND2_X1">NAND2_X1</button><button data-value="NOR2_X1">NOR2_X1</button></div>
@@ -319,7 +319,7 @@
         <div class="stat"><span class="k">LVS</span><span class="v" id="ex-o-lvs">—</span></div>
         <div class="stat"><span class="k">출력 노드 확산 커패시턴스</span><span class="v" id="ex-o-cj">—</span></div>
       </div>
-      <div class="sim-note">해볼 것: ① <b>엔드캡을 짧게</b> 하면 폴리가 활성 영역을 끝까지 덮지 못해 소스와 드레인이 이어진다. DRC는 PO.EX 위반을, LVS는 출력–VSS 단락을 보고한다. 같은 결함을 두 도구가 다른 말로 말한다. ② <b>M1을 넓히면</b> DRC 간격 위반만 생기고 LVS는 통과한다. 회로는 맞지만 만들 수 없는 레이아웃이다. ③ <b>콘택을 지우면</b> DRC는 깨끗하지만 LVS가 실패한다. 규칙상 문제없는 레이아웃도 틀린 회로일 수 있다. ④ 출력 노드의 확산 면적·둘레에서 접합 커패시턴스를 계산한다(\(C_j\) = 1.0 fF/µm², \(C_{jsw}\) = 0.08 fF/µm 가정). 이것이 셀 지연 표(8장)에 들어가는 자기 부하의 일부다. DRC·LVS의 자세한 내용은 <a href="signoff.html">10장</a>.</div>
+      <div class="sim-note">해볼 것: ① <b>엔드캡을 짧게</b> 하면 폴리가 활성 영역을 끝까지 덮지 못해 소스와 드레인이 이어진다. DRC는 PO.EX 위반을, LVS는 출력–VSS 단락을 보고한다. 같은 결함을 두 도구가 다른 말로 말한다. ② <b>M1을 넓히면</b> INV_X1에서는 DRC 간격 위반만 생기고 LVS는 통과한다. NAND2_X1·NOR2_X1에서는 이 고정 확대량으로 최소 간격을 깨뜨리지 않아 둘 다 통과할 수 있다. 회로는 맞지만 만들 수 없는 레이아웃이다. ③ <b>콘택을 지우면</b> DRC는 깨끗하지만 LVS가 실패한다. 규칙상 문제없는 레이아웃도 틀린 회로일 수 있다. ④ 출력 노드의 확산 면적·둘레에서 접합 커패시턴스를 계산한다(\(C_j\) = 1.0 fF/µm², \(C_{jsw}\) = 0.08 fF/µm 가정). 이것이 셀 지연 표(8장)에 들어가는 자기 부하의 일부다. DRC·LVS의 자세한 내용은 <a href="signoff.html">10장</a>.</div>
     </div>
   </section>
 

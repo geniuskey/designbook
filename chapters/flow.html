@@ -187,7 +187,7 @@ Cout = A & B | Cin & (A ^ B)</textarea>
 
   <section id="about">
     <h2>이 실행기가 하는 일과 하지 않는 일</h2>
-    <p>각 단계는 앞 장의 원리를 그대로 축소했다. 합성은 3장의 기술 매핑을, 배치는 5장의 교환 기반 개선을, 배선은 7장의 채널 배선을, 타이밍은 3·8장의 논리적 노력과 배선 C를, 검증은 10장의 DRC 엔진과 4장의 추출기를 쓴다. 실제 도구와 다른 점도 분명히 해 두자.</p>
+    <p>각 단계는 앞 장의 원리를 그대로 축소했다. 합성은 3장의 기술 매핑을, 배치는 5장의 교환 기반 개선을, 배선은 7장의 채널 배선을, 타이밍은 3·8장의 논리적 노력과 배선 C를, 검증은 10장의 DRC 엔진과 4장의 추출기를 쓴다. 공통 논리의 여러 출력 이름은 같은 물리 넷에 별칭 핀으로 남고 출력 부하도 합산한다. 게이트가 있는 회로에 섞인 입력 직결 출력도 배선·검증한다. 실제 도구와 다른 점도 분명히 해 두자.</p>
     <div class="table-wrap">
       <table>
         <thead><tr><th>단계</th><th>이 실행기</th><th>실제 흐름</th></tr></thead>
@@ -286,7 +286,7 @@ Cout = A & B | Cin & (A ^ B)</textarea>
         ctx.beginPath(); ctx.moveTo(a[0] + 14, a[1]); ctx.bezierCurveTo((a[0] + b[0]) / 2 + 8, a[1], (a[0] + b[0]) / 2 - 8, b[1], b[0], b[1]); ctx.stroke();
       });
     });
-    R.S.outs.forEach(function (o) { var a = pos[o.name]; ctx.strokeStyle = P.faint; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(a[0] + 14, a[1]); ctx.lineTo(w - 30, a[1]); ctx.stroke(); ctx.fillStyle = P.accent2; ctx.font = PB.font(12, true, 700); ctx.textAlign = "left"; ctx.textBaseline = "middle"; ctx.fillText(o.name, w - 28, a[1]); });
+    S.outs.forEach(function (o, i) { if (S.outs.slice(0, i).some(function (q) { return q.net === o.net; })) return; var a = pos[o.net]; ctx.strokeStyle = P.faint; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(a[0] + 14, a[1]); ctx.lineTo(w - 30, a[1]); ctx.stroke(); ctx.fillStyle = P.accent2; ctx.font = PB.font(12, true, 700); ctx.textAlign = "left"; ctx.textBaseline = "middle"; ctx.fillText(S.outs.filter(function (q) { return q.net === o.net; }).map(function (q) { return q.name; }).join(", "), w - 28, a[1]); });
     S.inputs.forEach(function (n) { var a = pos[n]; ctx.fillStyle = P.accent2; ctx.font = PB.font(12, true, 700); ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(n, a[0] + 10, a[1]); });
     S.gates.forEach(function (g) {
       var x = g._p[0], y = g._p[1], cr = crit[g.id];
@@ -317,7 +317,7 @@ Cout = A & B | Cin & (A ^ B)</textarea>
     order.forEach(function (id) { var g = byId[id], cw = C.CELLS[g.cell].w; ctx.fillStyle = g.t === "INV" ? PB.color("surface-2") : g.t === "NAND2" ? PB.color("accent-soft") : PB.color("accent-2-soft"); ctx.strokeStyle = g.t === "NOR2" ? P.accent2 : P.accent; ctx.lineWidth = 1.4; ctx.fillRect(X(x) + 1, oy, cw * k - 2, ch); ctx.strokeRect(X(x) + 1, oy, cw * k - 2, ch); ctx.fillStyle = P.text; ctx.font = PB.font(Math.min(11, cw * k / 4), true, 700); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(g.t.replace("2", ""), X(x + cw / 2), oy + ch / 2); x += cw; });
     var cols = ["#4263eb", "#e8590c", "#2f9e44", "#ae3ec9", "#1098ad", "#e03131", "#f08c00", "#5c7cfa", "#c2255c", "#37b24d", "#7048e8", "#0ca678"];
     Object.keys(np).forEach(function (n, i) {
-      var ps = np[n].map(function (p) { return p.x; }); if (R.S.inputs.indexOf(n) >= 0) ps.push(-150); if (R.S.outs.some(function (o) { return o.name === n; })) ps.push(Wd + 150);
+      var ps = np[n].map(function (p) { return p.x; }); if (R.S.inputs.indexOf(n) >= 0) ps.push(-150); if (R.S.outs.some(function (o) { return o.net === n; })) ps.push(Wd + 150);
       ps.sort(function (a, b) { return a - b; });
       ctx.strokeStyle = cols[i % cols.length]; ctx.lineWidth = 1.6; ctx.globalAlpha = 0.85;
       for (var j = 1; j < ps.length; j++) { var a = X(ps[j - 1]), b = X(ps[j]), hgt = Math.min(oy - 14, 12 + (b - a) * 0.25); ctx.beginPath(); ctx.moveTo(a, oy); ctx.bezierCurveTo(a, oy - hgt, b, oy - hgt, b, oy); ctx.stroke(); }

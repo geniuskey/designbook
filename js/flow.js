@@ -96,8 +96,8 @@
       gates.push({ id: i, cell: n.t === "INV" ? "INV_X1" : n.t + "_X1", t: n.t, ins: [n.a, n.b].filter((v) => v != null), out: i });
     });
     gates.forEach((g) => { g.inNets = g.ins.map((i) => net[i]); g.outNet = net[g.out]; });
-    // 출력이 입력을 그대로 가리키면(Y = A) 버퍼 2개로
-    outs.forEach((o) => { if (nodes[o.node].t === "in") { /* 간단히 무시 */ } });
+    // 별칭 출력도 같은 실제 넷을 가리킨다. 배선·부하·검증은 이 정규 이름을 사용한다.
+    outs.forEach((o) => { o.net = net[o.node]; });
     const level = {};
     const lev = (i) => { if (level[i] != null) return level[i]; const n = nodes[i]; return (level[i] = n.t === "in" ? 0 : 1 + Math.max(lev(n.a), n.b != null ? lev(n.b) : 0)); };
     gates.forEach((g) => (g.level = lev(g.out)));
@@ -141,11 +141,12 @@
       const L = layout(ord), np = {};
       const add = (n, p) => (np[n] = np[n] || []).push(p);
       ord.forEach((id) => { const g = byId[id]; const ps = pinsOf(g); g.inNets.forEach((n, k) => add(n, Object.assign(pinPos(g.cell, ps[k], L.pos[id]), { g: id, pin: ps[k] }))); add(g.outNet, Object.assign(pinPos(g.cell, "Y", L.pos[id]), { g: id, pin: "Y" })); });
+      S.outs.forEach((o) => { if (!np[o.net]) np[o.net] = []; }); // 입력 직결 출력도 배선 대상
       return { np, L };
     }
     function hpwl(ord) {
       const { np, L } = netPins(ord); let s = 0;
-      Object.keys(np).forEach((n) => { const xs = np[n].map((p) => p.x); if (S.inputs.includes(n)) xs.push(-150); if (S.outs.some((o) => o.name === n)) xs.push(L.W + 150); s += Math.max(...xs) - Math.min(...xs); });
+      Object.keys(np).forEach((n) => { const xs = np[n].map((p) => p.x); if (S.inputs.includes(n)) xs.push(-150); if (S.outs.some((o) => o.net === n)) xs.push(L.W + 150); s += Math.max(...xs) - Math.min(...xs); });
       return s;
     }
     const hist = [hpwl(order)];
@@ -168,8 +169,8 @@
   function route(S, P) {
     const nets = Object.keys(P.netPins).map((n) => {
       const ps = P.netPins[n], xs = ps.map((p) => p.x);
-      let x0 = Math.min(...xs) - 30, x1 = Math.max(...xs) + 30;
-      const isIn = S.inputs.includes(n), isOut = S.outs.some((o) => o.name === n);
+      let x0 = xs.length ? Math.min(...xs) - 30 : -200, x1 = xs.length ? Math.max(...xs) + 30 : P.W + 200;
+      const isIn = S.inputs.includes(n), isOut = S.outs.some((o) => o.net === n);
       if (isIn) x0 = Math.min(x0, -200); if (isOut) x1 = Math.max(x1, P.W + 200);
       return { name: n, pins: ps, x0, x1, isIn, isOut };
     });
@@ -195,6 +196,9 @@
       wl[n.name] = len;
       const lx = n.isIn ? n.x0 + 60 : n.isOut ? n.x1 - 60 : (n.x0 + n.x1) / 2;
       labels.push({ name: n.name, x: lx, y: n.y, l: "m1", io: n.isIn ? "in" : n.isOut ? "out" : "" });
+      S.outs.filter((o) => o.net === n.name && (o.name !== n.name || n.isIn)).forEach((o) => {
+        labels.push({ name: o.name, x: n.x1 - 60, y: n.y, l: "m1", io: "out" });
+      });
     });
     return { nets, rects, labels, tracks: trackEnd.length, wl, height: T0 + trackEnd.length * PITCH };
   }
@@ -219,7 +223,7 @@
     const tau = opts.tau || 3, cw = opts.cwire == null ? 0.2 : opts.cwire, Cout = opts.cout || 2, T = opts.T || 200, tsu = opts.tsu || 20;
     const loads = {};
     S.gates.forEach((g) => g.inNets.forEach((n) => (loads[n] = (loads[n] || 0) + LE[g.t].cin)));
-    S.outs.forEach((o) => (loads[o.name] = (loads[o.name] || 0) + Cout));
+    S.outs.forEach((o) => (loads[o.net] = (loads[o.net] || 0) + Cout));
     const AT = {}, from = {}, D = {};
     S.inputs.forEach((n) => (AT[n] = 0));
     const order = S.gates.slice().sort((a, b) => a.level - b.level);
@@ -231,16 +235,24 @@
       AT[g.outNet] = best + d; from[g.outNet] = { g: g.id, prev: bn };
     });
     const req = T - tsu;
+    S.outs.forEach((o) => {
+      if (!Number.isFinite(AT[o.net])) throw new Error("출력 도착 시간을 계산할 수 없음: " + o.name);
+      AT[o.name] = AT[o.net];
+    });
     let worst = null;
     S.outs.forEach((o) => { const s = req - AT[o.name]; if (!worst || s < worst.slack) worst = { out: o.name, slack: s, at: AT[o.name] }; });
     const path = [];
-    if (worst) { let n = worst.out; while (from[n]) { path.unshift(from[n].g); n = from[n].prev; } }
+    if (worst) { let n = S.outs.find((o) => o.name === worst.out).net; while (from[n]) { path.unshift(from[n].g); n = from[n].prev; } }
     return { AT, D, worst, path, req, fmax: worst ? 1000 / (worst.at + tsu) : 0 };
   }
 
   /* ------------------------------------------------------------ LVS (이름 붙은 넷 기준) */
   function lvs(S, L) {
-    const ext = C.extract(L.rects, L.labels);
+    const aliases = {}; S.outs.forEach((o) => { aliases[o.name] = o.net; });
+    const ext = C.extract(L.rects, L.labels, { aliases });
+    const portDiff = [];
+    S.inputs.forEach((name) => { if (ext.ports[name] !== name) portDiff.push("입력 포트 누락·연결 오류: " + name); });
+    S.outs.forEach((o) => { if (ext.ports[o.name] !== o.net) portDiff.push("출력 포트 누락·연결 오류: " + o.name); });
     const exp = [];
     S.gates.forEach((g) => {
       const sch = C.CELLS[g.cell].sch, map = { VDD: "VDD", VSS: "VSS", A: g.inNets[0], B: g.inNets[1], Y: g.outNet };
@@ -250,6 +262,7 @@
     const cnt = (list) => { const m = {}; list.forEach((d) => { const k = key(d); m[k] = (m[k] || 0) + 1; }); return m; };
     const a = cnt(ext.devices), b = cnt(exp);
     const diff = Object.keys(Object.assign({}, a, b)).filter((k) => (a[k] || 0) !== (b[k] || 0));
+    diff.push(...portDiff);
     return { ok: !diff.length && !ext.shorts.length && !ext.opens.length && !ext.errors.length, diff, ext, nE: ext.devices.length, nS: exp.length };
   }
 

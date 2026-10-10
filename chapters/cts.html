@@ -276,7 +276,7 @@
       </svg>
       <figcaption><b>그림 06-4.</b> ICG 셀. EN이 클럭 high 구간에 바뀌어도 래치가 다음 low 구간까지 값을 붙잡아 GCLK에는 온전한 펄스만 나간다. 아래 붉은 파형은 AND만 쓸 때 생기는 잘린 펄스다.</figcaption>
     </figure>
-    <p>합성 도구는 RTL의 <code>if (en) q &lt;= d;</code> 패턴(<a href="rtl.html">2장</a>)을 찾아 멀티플렉서 대신 ICG를 자동으로 넣는다. 수십 개 플롭이 ICG 하나를 공유하면 그 플롭들의 클럭 핀·로컬 트리 전력이 인에이블이 꺼진 비율만큼 사라진다. 블록 전체를 멈추는 큰 게이트(상위 게이팅)는 클럭 트리 자체의 전력까지 아낀다. CTS 입장에서는 ICG가 트리 중간의 “버퍼”이면서 동시에 셋업·홀드 검사 대상(EN 경로의 클럭 게이팅 검사)이 된다. 전력 효과는 <a href="power.html">9장</a>의 저전력 기법에서 다시 계산한다.</p>
+    <p>클럭 게이팅 최적화를 활성화하고 지원 ICG 셀·제약을 제공한 흐름에서는 RTL의 <code>if (en) q &lt;= d;</code> 패턴(<a href="rtl.html">2장</a>)에서 ICG를 삽입할 수 있다. 그 외에는 데이터 MUX나 enable 플롭으로 구현될 수 있다. 수십 개 플롭이 ICG 하나를 공유하면 그 플롭들의 클럭 핀·로컬 트리 전력이 인에이블이 꺼진 비율만큼 사라진다. 블록 전체를 멈추는 큰 게이트(상위 게이팅)는 클럭 트리 자체의 전력까지 아낀다. CTS 입장에서는 ICG가 트리 중간의 “버퍼”이면서 동시에 셋업·홀드 검사 대상(EN 경로의 클럭 게이팅 검사)이 된다. 전력 효과는 <a href="power.html">9장</a>의 저전력 기법에서 다시 계산한다.</p>
   </section>
 
   <section id="cdc">
@@ -321,7 +321,7 @@
         <div class="stat"><span class="k">MTBF (동기화기 1개)</span><span class="v" id="mt-o-m">—</span></div>
         <div class="stat"><span class="k">칩에 1000개면</span><span class="v" id="mt-o-c">—</span></div>
       </div>
-      <div class="sim-note">해볼 것: ① 2 GHz, N = 2에서 MTBF는 우주 나이를 훌쩍 넘지만, 같은 조건에서 N = 1(동기화 없이 바로 논리로)이면 밀리초 단위로 실패한다. ② f<sub>c</sub>를 4 GHz로 올리면 t<sub>r</sub>이 줄어 N = 2도 위험해진다. 고속 코어가 3단 동기화기를 쓰는 이유다. ③ τ는 공정과 전압에 좌우된다. 전압을 낮추면 τ가 커져 MTBF가 급락한다. (t<sub>r</sub> = (N − 1)(T<sub>c</sub> − t<sub>cq</sub> − t<sub>su</sub>) + 0.1 T<sub>c</sub>, t<sub>cq</sub> + t<sub>su</sub> = 70 ps로 가정. 멀티비트 버스는 동기화기가 아니라 비동기 FIFO·그레이 코드·핸드셰이크로 넘긴다.)</div>
+      <div class="sim-note">해볼 것: ① 기본 설정(2 GHz, 데이터 변화율 100 MHz, τ = 12 ps, T₀ = 50 ps)에서 N = 2의 MTBF는 약 746년이고 N = 1은 약 6.45 µs다. N = 3으로 늘리면 약 2.72×10¹⁸년이다. MTBF는 평균 실패 간격이며 그 시점마다 반드시 실패한다는 뜻은 아니다. ② f<sub>c</sub>를 4 GHz로 올리면 t<sub>r</sub>이 줄어 N = 2도 위험해진다. 고속 코어가 3단 동기화기를 쓰는 이유다. ③ τ는 공정과 전압에 좌우된다. 전압을 낮추면 τ가 커져 MTBF가 급락한다. (t<sub>r</sub> = (N − 1)(T<sub>c</sub> − t<sub>cq</sub> − t<sub>su</sub>) + 0.1 T<sub>c</sub>, t<sub>cq</sub> + t<sub>su</sub> = 70 ps로 가정. 멀티비트 버스는 동기화기가 아니라 비동기 FIFO·그레이 코드·핸드셰이크로 넘긴다.)</div>
     </div>
   </section>
 

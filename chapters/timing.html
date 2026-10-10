@@ -41,7 +41,7 @@
   <header class="chapter-hero">
     <div class="eyebrow">Chapter 08</div>
     <h1>정적 타이밍 분석</h1>
-    <p class="lead">배선이 끝난 칩에는 플립플롭 사이 경로가 수억 개 있다. 이 모든 경로에서 신호가 클럭 한 주기 안에 도착하는지를 시뮬레이션으로 확인하려면 모든 입력 조합을 넣어 봐야 하는데, 그것은 불가능하다. <strong>정적 타이밍 분석</strong><span class="en">(STA, Static Timing Analysis)</span>은 입력 값을 잊고 “가장 늦게, 가장 빨리 도착할 수 있는 시각”만 그래프 위에서 더하고 비교한다. 경로 수에 비례하는 시간으로 칩 전체의 타이밍을 보증하는, 사인오프의 중심 도구다.</p>
+    <p class="lead">배선이 끝난 칩에는 플립플롭 사이 경로가 수억 개 있다. 이 모든 경로에서 신호가 클럭 한 주기 안에 도착하는지를 시뮬레이션으로 확인하려면 모든 입력 조합을 넣어 봐야 하는데, 그것은 불가능하다. <strong>정적 타이밍 분석</strong><span class="en">(STA, Static Timing Analysis)</span>은 입력 값을 잊고 “가장 늦게, 가장 빨리 도착할 수 있는 시각”만 그래프 위에서 더하고 비교한다. 고정 지연 DAG의 기본 전파에서는 노드·간선 수에 비례하는 O(|V|+|E|) 시간으로 칩 전체의 타이밍을 보증하는, 사인오프의 중심 도구다.</p>
     <ul class="objectives">
       <li>타이밍 경로의 종류와 시작점·끝점, 런치·캡처 클럭을 구분한다.</li>
       <li>셋업·홀드 조건과 슬랙을 식으로 세우고, 클럭 스큐가 둘에 반대로 작용함을 확인한다.</li>
@@ -71,7 +71,7 @@
     <p>캡처 플롭이 데이터를 안전하게 받으려면 두 가지 조건이 필요하다. 다음 엣지 <strong>전에</strong> 셋업 시간만큼 일찍 도착해야 하고(셋업), 같은 엣지 <strong>뒤에</strong> 홀드 시간 동안은 바뀌지 않아야 한다(홀드). 데이터가 너무 늦으면 셋업 위반, 너무 빠르면 홀드 위반이다.</p>
     <div class="formula">$$\text{셋업 슬랙} = \big(T + \Delta - t_{\text{setup}}\big) - \big(t_{cq} + t_{\text{comb,max}}\big) \ge 0$$
       $$\text{홀드 슬랙} = \big(t_{cq} + t_{\text{comb,min}}\big) - \big(\Delta + t_{\text{hold}}\big) \ge 0$$
-      <div class="where">\(T\)는 클럭 주기, \(\Delta\)는 캡처 클럭이 런치 클럭보다 늦게 도착하는 양(스큐). 슬랙은 “요구 시간 − 도착 시간”이고, 음수면 위반이다. 셋업은 주기 \(T\)에 달려 있어 클럭을 늦추면 고칠 수 있지만, 홀드는 \(T\)와 무관하다. <strong>홀드 위반은 클럭을 늦춰도 고쳐지지 않는다</strong>. 그래서 홀드 위반이 남은 칩은 어떤 주파수에서도 동작하지 않는다.</div>
+      <div class="where">\(T\)는 클럭 주기, \(\Delta\)는 캡처 클럭이 런치 클럭보다 늦게 도착하는 양(스큐). 셋업 슬랙은 “최대 요구 시간 − 늦은 도착 시간”, 홀드 슬랙은 “빠른 도착 시간 − 최소 요구 시간”이며, 각각 음수면 위반이다. 셋업은 주기 \(T\)에 달려 있어 클럭을 늦추면 고칠 수 있지만, 홀드는 \(T\)와 무관하다. <strong>홀드 위반은 클럭을 늦춰도 고쳐지지 않는다</strong>. 그래서 홀드 위반이 남은 칩은 어떤 주파수에서도 동작하지 않는다.</div>
     </div>
     <div class="sim" id="sim-td">
       <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>타이밍 다이어그램: 셋업·홀드 슬랙</h3></div>
@@ -101,7 +101,7 @@
     <ol>
       <li><strong>도착 시간</strong>(AT, Arrival time)을 시작점에서 앞으로 전파한다: \(AT(v) = \max_{u \to v}\big(AT(u) + d_{uv}\big)\). 셋업 분석은 최대, 홀드 분석은 최소를 쓴다.</li>
       <li><strong>요구 시간</strong>(RT, Required time)을 끝점에서 거꾸로 전파한다: \(RT(u) = \min_{u \to v}\big(RT(v) - d_{uv}\big)\), 끝점의 RT는 \(T - t_{\text{setup}}\).</li>
-      <li>각 노드의 <strong>슬랙</strong> = RT − AT. 슬랙이 가장 작은 노드들을 이으면 <span class="term">임계 경로</span><span class="en">(Critical path)</span>다.</li>
+      <li>셋업 분석에서 각 노드의 <strong>슬랙</strong> = RT − AT. 홀드 분석에서는 빠른 도착을 전파하고 슬랙 = AT − RT로 판정한다. 슬랙이 가장 작은 노드들을 이으면 <span class="term">임계 경로</span><span class="en">(Critical path)</span>다.</li>
     </ol>
     <p>위상 정렬 순서로 한 번씩만 방문하면 되므로 계산량은 간선 수에 비례한다. 경로 수(지수적으로 많다)를 하나씩 세지 않는다는 것이 STA의 핵심이다. 대가는 비관성이다. 실제로는 동시에 일어날 수 없는 조합(거짓 경로)도 최악으로 더하므로, 설계자는 <span class="term">거짓 경로</span><span class="en">(False path)</span>와 <span class="term">멀티사이클 경로</span><span class="en">(Multicycle path)</span>를 SDC로 알려 준다.</p>
     <div class="sim" id="sim-dag">
@@ -163,8 +163,8 @@
   <section id="wire">
     <h2>배선 지연: 엘모어와 리피터</h2>
     <p>공정이 미세해지며 트랜지스터는 빨라졌지만 배선은 오히려 느려졌다. 배선 단면이 줄면 저항이 면적에 반비례해 커지고(크기 효과로 더 빨리, <a href="https://processbook.euiyun.com/chapters/metal.html">ProcessBook 11장</a>), 커패시턴스는 그대로이기 때문이다. RC 회로망의 지연은 <span class="term">엘모어 지연</span><span class="en">(Elmore delay)</span>으로 간단히 근사한다.</p>
-    <div class="formula">$$\tau_{\text{Elmore}} = \sum_i R_i \, C_{\text{down},i}, \qquad \tau_{\text{wire}} \approx 0.38\, r c L^2 \;(\text{분포 RC}),\qquad t_{50\%} \approx 0.69\,\tau$$
-      <div class="where">\(R_i\)는 구동점에서 노드 \(i\)까지 경로의 저항 조각, \(C_{\text{down},i}\)는 그 조각 아래쪽에 달린 모든 커패시턴스. 길이 \(L\)인 균일 배선의 지연은 \(L^2\)에 비례한다. 길이를 \(k\) 토막으로 나누고 사이에 버퍼(리피터)를 넣으면 토막마다 \((L/k)^2\)이 되어 전체는 \(k\cdot(L/k)^2 = L^2/k\), 리피터 지연이 더해져 최적 \(k\)에서 지연이 \(L\)에 비례하게 된다.</div>
+    <div class="formula">$$\tau_{\text{Elmore}} = \sum_i R_i \, C_{\text{down},i}, \qquad \tau_{E,\text{wire}} = \frac{1}{2}rcL^2,\quad t_{50\%,\text{wire}} \approx 0.38rcL^2,\quad t_{50\%,\text{lumped}} \approx 0.69RC$$
+      <div class="where">\(R_i\)는 구동점에서 노드 \(i\)까지 경로의 저항 조각, \(C_{\text{down},i}\)는 그 조각 아래쪽에 달린 모든 커패시턴스. 균일 배선의 두 식은 이상적인 계단 입력·수신 부하 없는 분포 RC 기준이며, 0.69RC는 단일 집중 RC의 50% 지연이다. 일반 RC 트리에 0.69τ를 일괄 적용하는 식은 아니다. 길이 \(L\)인 균일 배선의 지연은 \(L^2\)에 비례한다. 길이를 \(k\) 토막으로 나누고 사이에 버퍼(리피터)를 넣으면 토막마다 \((L/k)^2\)이 되어 전체는 \(k\cdot(L/k)^2 = L^2/k\), 리피터 지연이 더해져 최적 \(k\)에서 지연이 \(L\)에 비례하게 된다.</div>
     </div>
     <div class="sim" id="sim-rep">
       <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>긴 배선의 지연과 리피터 삽입</h3></div>
@@ -184,7 +184,7 @@
         <div class="stat"><span class="k">리피터 없을 때</span><span class="v" id="rep-o-0">—</span></div>
         <div class="stat"><span class="k">FO4 환산</span><span class="v" id="rep-o-f">—</span></div>
       </div>
-      <div class="sim-note">해볼 것: ① M2로 5 mm를 리피터 없이 보내면 수 ns, 클럭 수십 주기가 걸린다. 리피터를 넣으면 수십 배 빨라진다. ② 아래 곡선의 리피터 없음(점선)은 L², 최적 리피터(실선)는 L에 비례한다. ③ 같은 길이라도 위층 두꺼운 금속(M10)은 저항이 작아 리피터가 덜 필요하다. 그래서 긴 전역 신호와 클럭은 위층으로 보낸다(7장). (M2: r ≈ 1.2 Ω/µm·c ≈ 0.2 fF/µm, M6: 0.25 Ω/µm·0.2 fF/µm, M10: 0.02 Ω/µm·0.25 fF/µm, 단위 크기 버퍼 R<sub>0</sub> = 8 kΩ·C<sub>0</sub> = 1 fF·p = 7 ps로 가정한 교육용 값)</div>
+      <div class="sim-note">해볼 것: ① M2로 5 mm를 리피터 없이 보내면 수 ns, 클럭 수십 주기가 걸린다. 기본 크기 s = 8에서는 리피터 없음 약 3016 ps가 k = 13에서 약 1061 ps로 줄어 약 2.84배 빨라진다. 이 실험의 길이·크기 범위에서는 최대 약 4.04배다. ② 아래 곡선의 리피터 없음(점선)은 L², 최적 리피터(실선)는 L에 비례한다. ③ 같은 길이라도 위층 두꺼운 금속(M10)은 저항이 작아 리피터가 덜 필요하다. 그래서 긴 전역 신호와 클럭은 위층으로 보낸다(7장). (M2: r ≈ 1.2 Ω/µm·c ≈ 0.2 fF/µm, M6: 0.25 Ω/µm·0.2 fF/µm, M10: 0.02 Ω/µm·0.25 fF/µm, 단위 크기 버퍼 R<sub>0</sub> = 8 kΩ·C<sub>0</sub> = 1 fF·p = 7 ps로 가정한 교육용 값)</div>
     </div>
   </section>
 
@@ -477,6 +477,7 @@
     function delay(L, k, s) { // 구동 버퍼(크기 s) + k개 리피터 → k+1 토막
       var r = M[m][0] / 1000, c = M[m][1]; // kΩ/µm, fF/µm
       var n = k + 1, l = L / n, Rd = R0 / s, Cg = C0 * s, Rw = r * l, Cw = c * l;
+      // 구동·수신 부하의 집중 RC 항과 배선 자체의 분포 RC 50% 항을 구분한다.
       var seg = 0.69 * Rd * (Cw + Cg) + 0.38 * Rw * Cw + 0.69 * Rw * Cg + P0;
       return n * seg;
     }

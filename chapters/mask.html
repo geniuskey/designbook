@@ -55,7 +55,7 @@
 
   <section id="gds">
     <h2>GDSII: 설계의 최종 형식</h2>
-    <p>GDSII(1978, Calma)는 이진 레코드의 연속이다. 라이브러리 안에 구조(셀)가 있고, 각 셀은 레이어/데이터형 번호가 붙은 다각형(BOUNDARY), 경로(PATH), 다른 셀의 참조(SREF, 배열은 AREF), 텍스트 라벨을 담는다. 같은 셀을 수백만 번 쓰는 표준 셀 설계에서 <strong>참조</strong>는 결정적이다. NAND2 하나를 한 번만 정의하고 위치·방향만 수백만 번 적으면 된다. 계층을 모두 펼치면(flatten) 파일이 수천 배 커진다. 후속 형식 OASIS(2004)는 좌표를 가변 길이 정수로 압축하고 반복 무늬를 기술해 같은 데이터를 GDSII의 1/10 이하로 줄인다.</p>
+    <p>GDSII(1978, Calma)는 이진 레코드의 연속이다. 라이브러리 안에 구조(셀)가 있고, 각 셀은 레이어/데이터형 번호가 붙은 다각형(BOUNDARY), 경로(PATH), 다른 셀의 참조(SREF, 배열은 AREF), 텍스트 라벨을 담는다. 같은 셀을 수백만 번 쓰는 표준 셀 설계에서 <strong>참조</strong>는 결정적이다. NAND2 하나를 한 번만 정의하고 위치·방향만 수백만 번 적으면 된다. 계층을 모두 펼치면(flatten) 반복 도형이 복제되어 파일이 커진다. 배율은 셀 복잡도·참조 크기·재사용 구조에 달리며, 이 장의 천만 셀 모형에서는 약 40~55배다. 후속 형식 OASIS(2004)는 좌표를 가변 길이 정수로 압축하고 반복 무늬를 기술해 같은 데이터를 GDSII의 1/10 이하로 줄인다.</p>
     <p>아래는 4장의 INV_X1을 GDSII 레코드로 풀어 쓴 것이다(실제 파일은 이진이며, 좌표 단위는 1 nm로 두었다). 레이어 번호는 4장 대응표의 GDS 번호와 같다.</p>
     <div class="sim" id="sim-gds">
       <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>INV_X1 → GDSII 레코드</h3>
@@ -83,7 +83,7 @@
           <div class="info-box" id="md-info"></div>
         </div>
       </div>
-      <div class="sim-note">회색은 마스크에서 빛을 막는 부분(크롬), 흰색은 빛이 통과하는 부분이다. 해볼 것: ① <b>마스크 1(활성)</b>은 OD를 그대로 쓰되 감광막이 OD 위에 남아야 하므로 OD가 어두운 무늬다. 빛을 받는 나머지가 식각되어 STI가 된다. ② <b>마스크 2(p-웰)</b>는 NW의 반전이다. 설계자는 그리지 않았지만 파운드리가 만든다. ③ <b>NP/PP</b> 마스크는 원래 무늬를 키웠다가 줄여(sizing up/down) 좁은 틈과 가는 조각을 없앤다. 주입용 두꺼운 감광막이 그런 작은 무늬를 해상하지 못하기 때문이다. ④ 셀 하나만 보면 경계에서 끊기지만, 칩에서는 이웃 셀과 이어진다.</div>
+      <div class="sim-note">회색은 마스크에서 빛을 막는 부분(크롬), 흰색은 빛이 통과하는 부분이다. 해볼 것: ① <b>마스크 1(활성)</b>은 OD를 그대로 쓰되 감광막이 OD 위에 남아야 하므로 OD가 어두운 무늬다. 빛을 받는 나머지가 식각되어 STI가 된다. ② <b>마스크 2(p-웰)</b>는 NW의 반전이다. 설계자는 그리지 않았지만 파운드리가 만든다. ③ <b>NP/PP</b> 마스크는 이 실험에서는 각 사각형을 20 nm 확장한 뒤 셀 경계로 자르고 반전한다. 확장 후 축소하는 닫힘 연산이나 가는 조각을 제거하는 열림 연산을 구현한 것은 아니다. 주입용 두꺼운 감광막이 그런 작은 무늬를 해상하지 못하기 때문이다. ④ 셀 하나만 보면 경계에서 끊기지만, 칩에서는 이웃 셀과 이어진다.</div>
     </div>
     <div class="table-wrap">
       <table>
@@ -115,7 +115,7 @@
           <label class="ctrl"><span>OPC 조각 길이 <output id="fr-l-out"></output></span><input type="range" id="fr-l" min="10" max="200" step="5" value="40"></label>
           <label class="ctrl"><span>조각 이동 진폭 <output id="fr-a-out"></output></span><input type="range" id="fr-a" min="0" max="16" step="1" value="6"></label>
           <label class="ctrl"><span>최대 샷 크기 <output id="fr-s-out"></output></span><input type="range" id="fr-s" min="100" max="2000" step="50" value="500"></label>
-          <label class="ctrl"><span>칩 전체 다각형 수 (OPC 전) <output id="fr-n-out"></output></span><input type="range" id="fr-n" min="9" max="11.5" step="0.1" value="10.3"></label>
+          <label class="ctrl"><span>칩 전체 총 샷 수 (OPC 전) <output id="fr-n-out"></output></span><input type="range" id="fr-n" min="9" max="11.5" step="0.1" value="10.3"></label>
         </div>
       </div>
       <div class="sim-readout">
@@ -124,7 +124,7 @@
         <div class="stat"><span class="k">VSB 묘화 시간</span><span class="v" id="fr-o-v">—</span></div>
         <div class="stat"><span class="k">멀티빔 묘화 시간</span><span class="v" id="fr-o-m">—</span></div>
       </div>
-      <div class="sim-note">해볼 것: ① 이동 진폭을 0으로 두면 OPC 전 L자 무늬가 직사각형 2~3개로 분할된다. ② 진폭을 키우고 조각을 짧게 하면 들쭉날쭉한 OPC 무늬가 수십 개 조각으로 쪼개진다(색이 다른 사각형 하나 = 샷 하나). ③ 칩 전체로 환산하면 VSB 묘화 시간이 수십~수백 시간으로 커지지만, 멀티빔은 면적·화소 수로 정해져 거의 일정하다. (VSB: 샷당 60 ns + 스테이지 오버헤드 20%, 멀티빔: 마스크 한 장 약 10시간으로 가정한 교육용 값)</div>
+      <div class="sim-note">해볼 것: ① 이동 진폭을 0으로 두면 OPC 전 L자 무늬가 직사각형 2~3개로 분할된다. ② 진폭을 키우고 조각을 짧게 하면 들쭉날쭉한 OPC 무늬가 수십 개 조각으로 쪼개진다(색이 다른 사각형 하나 = 샷 하나). ③ 칩 전체로 환산하면 VSB 묘화 시간이 수십~수백 시간으로 커지지만, 멀티빔은 면적·화소 수로 정해져 거의 일정하다. (칩 입력은 OPC 전 총 샷 수이며 이 L자 예시의 OPC 샷 증가율을 전체에 적용한다. VSB: 샷당 60 ns + 스테이지 오버헤드 20%, 멀티빔: 마스크 한 장 약 10시간으로 가정한 교육용 값)</div>
     </div>
   </section>
 
@@ -181,7 +181,7 @@
   <section class="keypoints" id="summary">
     <h2>핵심 정리</h2>
     <ol>
-      <li>설계의 최종 산출물은 레이어별 다각형과 셀 참조로 된 GDSII/OASIS 파일이다. 계층(참조)이 데이터를 수천 배 줄인다.</li>
+      <li>설계의 최종 산출물은 레이어별 다각형과 셀 참조로 된 GDSII/OASIS 파일이다. 계층(참조)이 반복 도형의 저장량을 크게 줄이며 절감 배율은 구조에 따라 달라진다.</li>
       <li>파운드리는 MDP에서 반전·크기 조절·더미·색 분해·OPC로 설계 레이어를 마스크 레이어로 바꾼다.</li>
       <li>VSB 묘화 시간은 분할 샷 수에 비례해 OPC 복잡도와 함께 늘고, 멀티빔은 이를 거의 일정하게 만들었다.</li>
       <li>마스크 수와 비용은 세대마다 늘었다. NRE는 생산량으로 나뉘며, 금속 ECO는 일부 층만 바꿔 비용을 줄인다.</li>
@@ -193,7 +193,7 @@
     <div class="quiz">
       <div class="quiz-q"><p>GDSII에서 같은 표준 셀을 수백만 번 배치할 때 파일 크기를 줄여 주는 것은?</p><div class="opts">
         <button class="opt">PATH 레코드</button><button class="opt" data-correct>셀 참조(SREF/AREF)</button><button class="opt">TEXT 레코드</button><button class="opt">레이어 번호</button>
-      </div><div class="quiz-exp">셀을 한 번 정의하고 위치·방향만 참조로 적는다. 펼치면 다각형이 그대로 복제되어 수천 배 커진다.</div></div>
+      </div><div class="quiz-exp">셀을 한 번 정의하고 위치·방향만 참조로 적는다. 펼치면 다각형이 그대로 복제된다. 이 모형의 천만 번 INV 참조는 약 39.6배, NAND/NOR 참조는 약 55배 차이다.</div></div>
       <div class="quiz-q"><p>설계자가 그리지 않은 p-웰 마스크는 어떻게 만들어지는가?</p><div class="opts">
         <button class="opt">OD 레이어를 키워서</button><button class="opt" data-correct>NW 레이어를 반전(NOT)해서</button><button class="opt">PP 레이어를 그대로 써서</button><button class="opt">필요 없다</button>
       </div><div class="quiz-exp">MDP의 레이어 연산이다. 웰은 NW 안(n)과 밖(p)으로 나뉘므로 한 레이어로 두 마스크가 나온다.</div></div>
@@ -251,8 +251,8 @@
       { n: 2, name: "p-웰 주입", src: "nw", op: "NOT NW → 열린 곳 = p-웰", dark: function () { return L("nw"); }, tool: "KrF · 비임계 (두꺼운 감광막)", pr: "열린 곳(NW 밖)으로 붕소 주입" },
       { n: 3, name: "n-웰 주입", src: "nw", op: "NW → 열린 곳 = n-웰", dark: function () { return not(L("nw")); }, tool: "KrF · 비임계", pr: "열린 곳(NW 안)으로 인 주입" },
       { n: 4, name: "게이트", src: "po", op: "PO (어두운 무늬 = 남길 폴리)", dark: function () { return L("po"); }, tool: "EUV 또는 ArF 액침 + 멀티 패터닝 · 최임계, OPC 가장 정교", pr: "폴리 위 감광막을 남겨 식각 마스크로" },
-      { n: 5, name: "n-LDD 주입", src: "np", op: "NP SIZE +40 −40 (작은 틈 메움) → 열린 곳", dark: function () { return not(clip(size(L("np"), 20))); }, tool: "KrF/i-line · 비임계", pr: "PMOS 쪽을 가리고 As 주입" },
-      { n: 6, name: "p-LDD 주입", src: "pp", op: "PP SIZE ±40 → 열린 곳", dark: function () { return not(clip(size(L("pp"), 20))); }, tool: "KrF/i-line · 비임계", pr: "NMOS 쪽을 가리고 BF₂ 주입" },
+      { n: 5, name: "n-LDD 주입", src: "np", op: "NP SIZE +20 nm → 셀 경계 클리핑 → 열린 곳", dark: function () { return not(clip(size(L("np"), 20))); }, tool: "KrF/i-line · 비임계", pr: "PMOS 쪽을 가리고 As 주입" },
+      { n: 6, name: "p-LDD 주입", src: "pp", op: "PP SIZE +20 nm → 셀 경계 클리핑 → 열린 곳", dark: function () { return not(clip(size(L("pp"), 20))); }, tool: "KrF/i-line · 비임계", pr: "NMOS 쪽을 가리고 BF₂ 주입" },
       { n: 7, name: "n⁺ S/D 주입", src: "np", op: "마스크 5와 같은 데이터 (다른 공정 단계)", dark: function () { return not(clip(size(L("np"), 20))); }, tool: "KrF · 비임계", pr: "스페이서 형성 후 As 깊게" },
       { n: 8, name: "p⁺ S/D 주입", src: "pp", op: "마스크 6과 같은 데이터", dark: function () { return not(clip(size(L("pp"), 20))); }, tool: "KrF · 비임계", pr: "B 깊게" },
       { n: 9, name: "콘택", src: "co", op: "CO (열린 구멍) — 어두운 바탕", dark: function () { return not(L("co")); }, tool: "EUV · 임계 (구멍은 가장 어려운 무늬)", pr: "구멍으로 PMD 식각" },
@@ -325,8 +325,9 @@
       var cols = ["#4263eb", "#ae3ec9", "#0ca678", "#f08c00", "#e64980", "#1098ad", "#7048e8", "#74b816"];
       shots.forEach(function (r, i) { ctx.fillStyle = cols[i % cols.length]; ctx.globalAlpha = 0.55; ctx.fillRect(ox + r.x0 * k, oy + size - r.y1 * k, (r.x1 - r.x0) * k, (r.y1 - r.y0) * k); ctx.globalAlpha = 1; ctx.strokeStyle = P.text; ctx.lineWidth = 0.6; ctx.strokeRect(ox + r.x0 * k, oy + size - r.y1 * k, (r.x1 - r.x0) * k, (r.y1 - r.y0) * k); });
       ctx.strokeStyle = P.faint; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(ox + 60 * k, oy + size - 60 * k); ctx.lineTo(ox + 340 * k, oy + size - 60 * k); ctx.lineTo(ox + 340 * k, oy + size - 130 * k); ctx.lineTo(ox + 130 * k, oy + size - 130 * k); ctx.lineTo(ox + 130 * k, oy + size - 340 * k); ctx.lineTo(ox + 60 * k, oy + size - 340 * k); ctx.closePath(); ctx.stroke(); ctx.setLineDash([]);
-      var base = fracture(shape(gL(), 0), gS()).length, perPoly = shots.length / 3; // L자 = 다각형 약 3개 분량
-      var total = Math.pow(10, gN()) * perPoly / (base / 3);
+      var base = fracture(shape(gL(), 0), gS()).length;
+      // 입력은 OPC 전 총 샷 수. 이 L자 예시의 샷 증가율을 칩 전체에 적용하는 교육용 환산.
+      var total = Math.pow(10, gN()) * shots.length / base;
       var tV = total * 60e-9 * 1.2 / 3600, tM = 10;
       PB.stat("fr-o-s", small(shots.length, "샷") + " <small>(OPC 전 " + base + ")</small>");
       PB.stat("fr-o-t", small(total.toExponential(1).replace("e+", "×10^"), ""));
